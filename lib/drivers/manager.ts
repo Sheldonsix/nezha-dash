@@ -38,10 +38,20 @@ export class DriverManager implements IDriverManager {
     // Determine driver type from environment
     const isMyNodeQueryMode = getEnv("NEXT_PUBLIC_MyNodeQuery") === "true"
     const isKomariMode = getEnv("NEXT_PUBLIC_Komari") === "true"
+    const isNodeStatusMode = getEnv("NEXT_PUBLIC_NodeStatus") === "true"
     const hasMyNodeQueryConfig = !!getEnv("MyNodeQueryBaseUrl")
     const hasKomariConfig = !!getEnv("KomariBaseUrl")
+    const hasNodeStatusConfig = !!getEnv("NodeStatusBaseUrl")
     const hasNezhaConfig = !!getEnv("NezhaBaseUrl") && !!getEnv("NezhaAuth")
     const driverPreferences: SupportedDriverType[] = []
+
+    if (isNodeStatusMode) {
+      if (hasNodeStatusConfig) {
+        driverPreferences.push("nodestatus")
+      } else {
+        console.warn("NodeStatus mode enabled but NodeStatusBaseUrl is not configured")
+      }
+    }
 
     if (isMyNodeQueryMode) {
       if (hasMyNodeQueryConfig) {
@@ -248,6 +258,24 @@ export class DriverManager implements IDriverManager {
         }
       }
 
+      case "nodestatus": {
+        const baseUrl = getEnv("NodeStatusBaseUrl") || ""
+
+        if (!baseUrl) {
+          throw new DriverOperationError(
+            "manager",
+            "createDriverConfig",
+            "NodeStatusBaseUrl is required for NodeStatus driver",
+          )
+        }
+
+        return {
+          baseUrl,
+          timeout: 30000,
+          revalidate: 0,
+        }
+      }
+
       default:
         throw new DriverOperationError(
           "manager",
@@ -264,7 +292,7 @@ export class DriverManager implements IDriverManager {
     const availableDrivers = this.getAvailableDrivers()
 
     // Priority order for auto-detection
-    const detectionOrder: SupportedDriverType[] = ["nezha", "komari", "mynodequery"]
+    const detectionOrder: SupportedDriverType[] = ["nezha", "komari", "mynodequery", "nodestatus"]
 
     for (const driverType of detectionOrder) {
       if (!availableDrivers.includes(driverType)) continue

@@ -8,6 +8,7 @@ import ServerDetailSummary from "@/app/(main)/ClientComponents/detail/ServerDeta
 import ServerIPInfo from "@/app/(main)/ClientComponents/detail/ServerIPInfo"
 import TabSwitch from "@/components/TabSwitch"
 import { Separator } from "@/components/ui/separator"
+import { configuredDriverSupportsMonitoring } from "@/lib/drivers/capabilities"
 import getEnv from "@/lib/env-entry"
 
 type PageProps = {
@@ -20,14 +21,10 @@ export default function Page({ params }: PageProps) {
   const { id } = use(params)
   const serverId = Number(id)
 
-  // Check if alternative driver modes are enabled
-  const isKomariMode = getEnv("NEXT_PUBLIC_Komari") === "true"
-  const isMyNodeQueryMode = getEnv("NEXT_PUBLIC_MyNodeQuery") === "true"
-  const disableNetworkTab = isKomariMode || isMyNodeQueryMode
+  const disableNetworkTab = !configuredDriverSupportsMonitoring()
 
-  // Always show both tabs, but disable Network tab in Komari mode
-  const tabs: TabType[] = ["Detail", "Network"]
-  const disabledTabs: TabType[] = disableNetworkTab ? ["Network"] : []
+  const tabs: TabType[] = disableNetworkTab ? ["Detail"] : ["Detail", "Network"]
+  const disabledTabs: TabType[] = []
   const [currentTab, setCurrentTab] = useState<TabType>(tabs[0])
 
   const showServerDetailSummary = getEnv("NEXT_PUBLIC_ShowServerDetailSummary") === "true"

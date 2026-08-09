@@ -7,13 +7,14 @@ const bundleAnalyzer = withBundleAnalyzer({
 })
 
 const withNextIntl = createNextIntlPlugin()
+const isDev = process.env.NODE_ENV === "development"
 
 const withPWA = withPWAInit({
   dest: "public",
   cacheOnFrontEndNav: true,
   aggressiveFrontEndNavCaching: true,
-  reloadOnOnline: true,
-  disable: false,
+  reloadOnOnline: false,
+  disable: isDev,
   workboxOptions: {
     disableDevLogs: true,
   },

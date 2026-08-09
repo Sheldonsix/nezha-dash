@@ -1,16 +1,12 @@
 import { redirect } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { AggregatedNetworkCharts } from "@/app/(main)/ClientComponents/network/AggregatedNetworkCharts"
-import getEnv from "@/lib/env-entry"
+import { configuredDriverSupportsMonitoring } from "@/lib/drivers/capabilities"
 
 export default function NetworkPage() {
   const t = useTranslations("NetworkPage")
 
-  // Check if driver mode supports network monitoring
-  const isKomariMode = getEnv("NEXT_PUBLIC_Komari") === "true"
-  const isMyNodeQueryMode = getEnv("NEXT_PUBLIC_MyNodeQuery") === "true"
-
-  if (isKomariMode || isMyNodeQueryMode) {
+  if (!configuredDriverSupportsMonitoring()) {
     redirect("/")
   }
 

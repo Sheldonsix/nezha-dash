@@ -241,3 +241,55 @@ export interface MyNodeQueryOverview {
   BuyUrl: string
   ShowRealReport: boolean
 }
+
+// NodeStatus API types
+export interface NodeStatusAPIResponse {
+  servers: NodeStatusServer[]
+  updated: number
+}
+
+export interface NodeStatusServer {
+  id: number
+  username: string
+  name: string
+  type: string
+  location: string
+  region: string
+  order: number
+  last_active?: number
+  status?: Partial<NodeStatusServerStatus>
+}
+
+export interface NodeStatusServerStatus {
+  online4: boolean
+  online6: boolean
+  uptime: number
+  load: number
+  cpu: number
+  network_rx: number
+  network_tx: number
+  network_in: number
+  network_out: number
+  memory_total: number
+  memory_used: number
+  swap_total: number
+  swap_used: number
+  hdd_total: number
+  hdd_used: number
+  platform?: string
+  platform_version?: string
+  arch?: string
+  virtualization?: string
+  cpu_info?: string[]
+  gpu_info?: string[]
+  version?: string
+  load1?: number
+  load5?: number
+  load15?: number
+  tcp_conn_count?: number
+  udp_conn_count?: number
+  process_count?: number
+  temperatures?: number
+  gpu?: number
+  custom: string
+}

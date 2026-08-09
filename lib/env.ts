@@ -20,6 +20,8 @@ export interface ServerEnvConfig {
   KomariBaseUrl: string
   /** MyNodeQuery API base URL */
   MyNodeQueryBaseUrl: string
+  /** NodeStatus API base URL */
+  NodeStatusBaseUrl: string
 }
 
 /**
@@ -58,6 +60,8 @@ export interface ClientEnvConfig {
   Komari: boolean
   /** Enable MyNodeQuery panel compatibility */
   MyNodeQuery: boolean
+  /** Enable NodeStatus panel compatibility */
+  NodeStatus: boolean
   /** Show server detail summary */
   ShowServerDetailSummary: boolean
 }
@@ -139,6 +143,7 @@ export function getAllEnvConfig(): { server: ServerEnvConfig; client: ClientEnvC
       EnablePacketLossCalculation: parseBoolean(getServerEnv("EnablePacketLossCalculation")),
       KomariBaseUrl: getServerEnv("KomariBaseUrl") || "",
       MyNodeQueryBaseUrl: getServerEnv("MyNodeQueryBaseUrl") || "",
+      NodeStatusBaseUrl: getServerEnv("NodeStatusBaseUrl") || "",
     },
     client: {
       NezhaFetchInterval: parseNumber(getClientEnv("NezhaFetchInterval"), 5000),
@@ -157,6 +162,7 @@ export function getAllEnvConfig(): { server: ServerEnvConfig; client: ClientEnvC
       ShowIpInfo: parseBoolean(getClientEnv("ShowIpInfo")),
       Komari: parseBoolean(getClientEnv("Komari")),
       MyNodeQuery: parseBoolean(getClientEnv("MyNodeQuery")),
+      NodeStatus: parseBoolean(getClientEnv("NodeStatus")),
       ShowServerDetailSummary: parseBoolean(getClientEnv("ShowServerDetailSummary")),
     },
   }

@@ -62,6 +62,19 @@ NezhaDash 同样支持 [MyNodeQuery](https://status.idcoffer.com/) 数据源。�
 > [!NOTE]
 > MyNodeQuery 模式下仪表盘的网络图表会自动隐藏。
 
+#### NodeStatus 面板兼容
+
+NezhaDash 支持 [NodeStatus](https://github.com/cokemine/nodestatus) 数据源。要启用 NodeStatus 模式，请设置以下环境变量：
+
+- `NEXT_PUBLIC_NodeStatus=true` - 启用 NodeStatus 兼容模式
+- `NodeStatusBaseUrl=https://your-nodestatus-instance.com` - NodeStatus 面板的基础 URL
+
+启用后系统会调用 NodeStatus 的公开接口：
+- `NodeStatusBaseUrl/api/status` - 获取服务器列表和实时状态
+
+> [!NOTE]
+> NodeStatus 模式下网络延迟图表和 IP 信息不可用；节点的带宽、流量、CPU、内存、硬盘等实时信息会正常显示。
+
 ![screen](/.github/v2-1.webp)
 ![screen](/.github/v2-2.webp)
 ![screen](/.github/v2-3.webp)

@@ -2,15 +2,11 @@
 
 import { Activity } from "lucide-react"
 import Link from "next/link"
-import getEnv from "@/lib/env-entry"
+import { configuredDriverSupportsMonitoring } from "@/lib/drivers/capabilities"
 import { Button } from "./ui/button"
 
 export function NetworkButton() {
-  // Hide network button when the active driver does not support network charts
-  const isKomariMode = getEnv("NEXT_PUBLIC_Komari") === "true"
-  const isMyNodeQueryMode = getEnv("NEXT_PUBLIC_MyNodeQuery") === "true"
-
-  if (isKomariMode || isMyNodeQueryMode) {
+  if (!configuredDriverSupportsMonitoring()) {
     return null
   }
 

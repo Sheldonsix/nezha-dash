@@ -17,6 +17,9 @@ import type {
   NezhaAPIMonitor as _NezhaAPIMonitor,
   NezhaAPISafe as _NezhaAPISafe,
   NezhaAPIStatus as _NezhaAPIStatus,
+  NodeStatusAPIResponse as _NodeStatusAPIResponse,
+  NodeStatusServer as _NodeStatusServer,
+  NodeStatusServerStatus as _NodeStatusServerStatus,
   ServerApi as _ServerApi,
   ServerMonitorChart as _ServerMonitorChart,
 } from "./api-types"
@@ -37,6 +40,9 @@ export type MyNodeQueryNode = _MyNodeQueryNode
 export type MyNodeQueryOverview = _MyNodeQueryOverview
 export type MyNodeQueryListResponse = _MyNodeQueryListResponse
 export type MyNodeQueryDetailResponse = _MyNodeQueryDetailResponse
+export type NodeStatusAPIResponse = _NodeStatusAPIResponse
+export type NodeStatusServer = _NodeStatusServer
+export type NodeStatusServerStatus = _NodeStatusServerStatus
 
 /**
  * Driver configuration interface

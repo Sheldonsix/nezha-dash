@@ -26,6 +26,8 @@ interface DriverInfoError {
     hasNezhaAuth: boolean
     myNodeQueryMode: boolean
     hasMyNodeQueryUrl: boolean
+    nodeStatusMode: boolean
+    hasNodeStatusUrl: boolean
   }
   availableDrivers: string[]
   configuredDriver: string
