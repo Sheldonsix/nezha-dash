@@ -6,10 +6,10 @@ on:
   push:
     tags:
       - "v*"
+  workflow_dispatch:
 
 env:
-  REGISTRY_IMAGE: hamster1963/nezha-dash
-  ALIYUN_REGISTRY_IMAGE: registry.cn-guangzhou.aliyuncs.com/hamster-home/nezha-dash
+  REGISTRY_IMAGE: ${{ secrets.DOCKER_USERNAME }}/nezha-dash
 
 jobs:
   build-and-push:
@@ -33,20 +33,11 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Login to AliYun Container Registry
-        uses: docker/login-action@v4
-        with:
-          registry: registry.cn-guangzhou.aliyuncs.com
-          username: ${{ secrets.ALI_USERNAME }}
-          password: ${{ secrets.ALI_TOKEN }}
-
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v6
         with:
-          images: |
-            ${{ env.REGISTRY_IMAGE }}
-            ${{ env.ALIYUN_REGISTRY_IMAGE }}
+          images: ${{ env.REGISTRY_IMAGE }}
           tags: |
             type=raw,value=latest
             type=ref,event=tag
@@ -69,6 +60,7 @@ jobs:
         uses: pnpm/action-setup@v6.0.9
 
       - name: Changelog
+        if: startsWith(github.ref, 'refs/tags/')
         run: pnpm dlx changelogithub
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
