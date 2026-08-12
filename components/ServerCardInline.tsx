@@ -93,13 +93,13 @@ export default function ServerCardInline({ serverInfo }: { serverInfo: NezhaAPIS
             </div>
             <div className={"flex w-16 flex-col"}>
               <p className="text-muted-foreground text-xs">{t("Upload")}</p>
-              <div className="flex items-center font-semibold text-xs">
+              <div className="flex items-center whitespace-nowrap font-semibold text-xs">
                 {formatBytes(serverInfo.status.NetOutSpeed)}/s
               </div>
             </div>
             <div className={"flex w-16 flex-col"}>
               <p className="text-muted-foreground text-xs">{t("Download")}</p>
-              <div className="flex items-center font-semibold text-xs">
+              <div className="flex items-center whitespace-nowrap font-semibold text-xs">
                 {formatBytes(serverInfo.status.NetInSpeed)}/s
               </div>
             </div>
