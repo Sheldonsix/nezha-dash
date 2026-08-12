@@ -2,7 +2,7 @@
 
 import { useServerData } from "@/app/context/server-data-context"
 import { Progress } from "@/components/ui/progress"
-import { formatNezhaInfo } from "@/lib/utils"
+import { formatBytes, formatNezhaInfo } from "@/lib/utils"
 
 export default function ServerDetailSummary({ server_id }: { server_id: number }) {
   const { data: serverList, error } = useServerData()
@@ -13,7 +13,7 @@ export default function ServerDetailSummary({ server_id }: { server_id: number }
     return null
   }
 
-  const { cpu, gpu, gpu_info, mem, disk, up, down, tcp, udp, process } = formatNezhaInfo(data)
+  const { cpu, gpu, gpu_info, mem, disk, tcp, udp, process } = formatNezhaInfo(data)
 
   return (
     <div className="mb-2 flex flex-wrap items-center gap-4">
@@ -66,11 +66,15 @@ export default function ServerDetailSummary({ server_id }: { server_id: number }
       <section className="flex min-w-[120px] flex-col justify-center gap-0.5 px-1.5 py-1">
         <section className="flex items-center justify-between gap-4">
           <span className="text-[10px] text-muted-foreground">Upload</span>
-          <span className="font-medium text-[10px]">{up.toFixed(2)}M/s</span>
+          <span className="whitespace-nowrap font-medium text-[10px]">
+            {formatBytes(data.status.NetOutSpeed)}/s
+          </span>
         </section>
         <section className="flex items-center justify-between gap-4">
           <span className="text-[10px] text-muted-foreground">Download</span>
-          <span className="font-medium text-[10px]">{down.toFixed(2)}M/s</span>
+          <span className="whitespace-nowrap font-medium text-[10px]">
+            {formatBytes(data.status.NetInSpeed)}/s
+          </span>
         </section>
       </section>
     </div>

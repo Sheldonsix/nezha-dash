@@ -572,17 +572,16 @@ function NetworkChart({
   history: ServerDataWithTimestamp[]
 }) {
   const t = useTranslations("ServerDetailChartClient")
-  const { up, down } = formatNezhaInfo(data)
   const networkChartData = buildServerMetricHistory({
     data,
     history,
     select: (server) => ({ upload: server.up, download: server.down }),
   })
 
-  let maxDownload = Math.max(...networkChartData.map((item) => item.download))
-  maxDownload = Math.ceil(maxDownload)
-  if (maxDownload < 1) {
-    maxDownload = 1
+  let maxSpeed = Math.max(...networkChartData.map((item) => Math.max(item.upload, item.download)))
+  maxSpeed = Math.ceil(maxSpeed)
+  if (maxSpeed < 1) {
+    maxSpeed = 1
   }
 
   const chartConfig = {
@@ -604,14 +603,18 @@ function NetworkChart({
                 <p className="text-muted-foreground text-xs">{t("Upload")}</p>
                 <div className="flex items-center gap-1">
                   <span className="relative inline-flex size-1.5 rounded-full bg-[hsl(var(--chart-1))]" />
-                  <p className="font-medium text-xs">{up.toFixed(2)} M/s</p>
+                  <p className="whitespace-nowrap font-medium text-xs">
+                    {formatBytes(data.status.NetOutSpeed)}/s
+                  </p>
                 </div>
               </div>
               <div className="flex w-20 flex-col">
                 <p className="text-muted-foreground text-xs">{t("Download")}</p>
                 <div className="flex items-center gap-1">
                   <span className="relative inline-flex size-1.5 rounded-full bg-[hsl(var(--chart-4))]" />
-                  <p className="font-medium text-xs">{down.toFixed(2)} M/s</p>
+                  <p className="whitespace-nowrap font-medium text-xs">
+                    {formatBytes(data.status.NetInSpeed)}/s
+                  </p>
                 </div>
               </div>
             </section>
@@ -644,8 +647,8 @@ function NetworkChart({
                 type="number"
                 minTickGap={50}
                 interval="preserveStartEnd"
-                domain={[1, maxDownload]}
-                tickFormatter={(value) => `${value.toFixed(0)}M/s`}
+                domain={[0, maxSpeed]}
+                tickFormatter={(value) => `${formatBytes(value * 1024 * 1024)}/s`}
               />
               <MetricTooltip
                 formatValue={(value) => `${formatBytes(Number(value) * 1024 * 1024)}/s`}
