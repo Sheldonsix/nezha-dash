@@ -10,11 +10,65 @@ import {
 import { ServerDetailChartLoading } from "@/components/loading/ServerDetailLoading"
 import AnimatedCircularProgressBar from "@/components/ui/animated-circular-progress-bar"
 import { Card, CardContent } from "@/components/ui/card"
-import { type ChartConfig, ChartContainer } from "@/components/ui/chart"
+import {
+  type ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart"
 import type { NezhaAPISafe } from "@/lib/drivers/types"
 import { formatBytes, formatNezhaInfo, formatRelativeTime } from "@/lib/utils"
 
 type FormattedServerInfo = ReturnType<typeof formatNezhaInfo>
+
+const tooltipLabels: Record<string, string> = {
+  cpu: "CPU",
+  gpu: "GPU",
+  process: "Process",
+  mem: "Mem",
+  swap: "Swap",
+  disk: "Disk",
+  upload: "Upload",
+  download: "Download",
+  tcp: "TCP",
+  udp: "UDP",
+}
+
+function formatChartTooltipTime(
+  _: unknown,
+  payload: Array<{ payload?: { timeStamp?: string } }>,
+) {
+  const timeStamp = payload[0]?.payload?.timeStamp
+  return timeStamp ? new Date(Number(timeStamp)).toLocaleString() : ""
+}
+
+function MetricTooltip({
+  formatValue = (value) => Number(value).toFixed(2),
+}: {
+  formatValue?: (value: unknown) => string
+}) {
+  return (
+    <ChartTooltip
+      isAnimationActive={false}
+      content={
+        <ChartTooltipContent
+          indicator="line"
+          labelFormatter={formatChartTooltipTime}
+          formatter={(value, name) => (
+            <div className="flex flex-1 items-center justify-between leading-none">
+              <span className="text-muted-foreground">
+                {tooltipLabels[String(name)] || String(name)}
+              </span>
+              <span className="ml-2 font-medium text-foreground tabular-nums">
+                {formatValue(value)}
+              </span>
+            </div>
+          )}
+        />
+      }
+    />
+  )
+}
 
 function buildServerMetricHistory<T extends Record<string, number>>({
   data,
@@ -153,6 +207,7 @@ function CpuChart({ history, data }: { history: ServerDataWithTimestamp[]; data:
                 domain={[0, 100]}
                 tickFormatter={(value) => `${value}%`}
               />
+              <MetricTooltip formatValue={(value) => `${Number(value).toFixed(2)}%`} />
               <Area
                 isAnimationActive={false}
                 dataKey="cpu"
@@ -228,6 +283,7 @@ function GpuChart({ history, data }: { history: ServerDataWithTimestamp[]; data:
                 domain={[0, 100]}
                 tickFormatter={(value) => `${value}%`}
               />
+              <MetricTooltip formatValue={(value) => `${Number(value).toFixed(2)}%`} />
               <Area
                 isAnimationActive={false}
                 dataKey="gpu"
@@ -296,6 +352,7 @@ function ProcessChart({
                 tickFormatter={(value) => formatRelativeTime(value)}
               />
               <YAxis tickLine={false} axisLine={false} mirror={true} tickMargin={-15} />
+              <MetricTooltip formatValue={(value) => Number(value).toFixed(0)} />
               <Area
                 isAnimationActive={false}
                 dataKey="process"
@@ -400,6 +457,7 @@ function MemChart({ data, history }: { data: NezhaAPISafe; history: ServerDataWi
                 domain={[0, 100]}
                 tickFormatter={(value) => `${value}%`}
               />
+              <MetricTooltip formatValue={(value) => `${Number(value).toFixed(2)}%`} />
               <Area
                 isAnimationActive={false}
                 dataKey="mem"
@@ -489,6 +547,7 @@ function DiskChart({ data, history }: { data: NezhaAPISafe; history: ServerDataW
                 domain={[0, 100]}
                 tickFormatter={(value) => `${value}%`}
               />
+              <MetricTooltip formatValue={(value) => `${Number(value).toFixed(2)}%`} />
               <Area
                 isAnimationActive={false}
                 dataKey="disk"
@@ -588,6 +647,9 @@ function NetworkChart({
                 domain={[1, maxDownload]}
                 tickFormatter={(value) => `${value.toFixed(0)}M/s`}
               />
+              <MetricTooltip
+                formatValue={(value) => `${formatBytes(Number(value) * 1024 * 1024)}/s`}
+              />
               <Line
                 isAnimationActive={false}
                 dataKey="upload"
@@ -685,6 +747,7 @@ function ConnectChart({
                 type="number"
                 interval="preserveStartEnd"
               />
+              <MetricTooltip formatValue={(value) => Number(value).toFixed(0)} />
               <Line
                 isAnimationActive={false}
                 dataKey="tcp"

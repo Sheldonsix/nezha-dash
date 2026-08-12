@@ -12,7 +12,7 @@ import { Separator } from "./ui/separator"
 
 export default function ServerCardInline({ serverInfo }: { serverInfo: NezhaAPISafe }) {
   const t = useTranslations("ServerCard")
-  const { id, name, country_code, online, cpu, up, down, mem, stg, host } =
+  const { id, name, country_code, online, cpu, mem, stg, host } =
     formatNezhaInfo(serverInfo)
 
   const showFlag = getEnv("NEXT_PUBLIC_ShowFlag") === "true"
@@ -94,13 +94,13 @@ export default function ServerCardInline({ serverInfo }: { serverInfo: NezhaAPIS
             <div className={"flex w-16 flex-col"}>
               <p className="text-muted-foreground text-xs">{t("Upload")}</p>
               <div className="flex items-center font-semibold text-xs">
-                {up >= 1024 ? `${(up / 1024).toFixed(2)}G/s` : `${up.toFixed(2)}M/s`}
+                {formatBytes(serverInfo.status.NetOutSpeed)}/s
               </div>
             </div>
             <div className={"flex w-16 flex-col"}>
               <p className="text-muted-foreground text-xs">{t("Download")}</p>
               <div className="flex items-center font-semibold text-xs">
-                {down >= 1024 ? `${(down / 1024).toFixed(2)}G/s` : `${down.toFixed(2)}M/s`}
+                {formatBytes(serverInfo.status.NetInSpeed)}/s
               </div>
             </div>
             <div className={"flex w-20 flex-col"}>

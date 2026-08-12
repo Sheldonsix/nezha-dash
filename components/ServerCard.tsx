@@ -11,7 +11,7 @@ import { cn, formatBytes, formatNezhaInfo } from "@/lib/utils"
 
 export default function ServerCard({ serverInfo }: { serverInfo: NezhaAPISafe }) {
   const t = useTranslations("ServerCard")
-  const { id, name, country_code, online, cpu, up, down, mem, stg, host } =
+  const { id, name, country_code, online, cpu, mem, stg, host } =
     formatNezhaInfo(serverInfo)
 
   const showFlag = getEnv("NEXT_PUBLIC_ShowFlag") === "true"
@@ -100,13 +100,13 @@ export default function ServerCard({ serverInfo }: { serverInfo: NezhaAPISafe })
             <div className={"flex w-14 flex-col"}>
               <p className="text-muted-foreground text-xs">{t("Upload")}</p>
               <div className="flex items-center font-semibold text-xs">
-                {up >= 1024 ? `${(up / 1024).toFixed(2)}G/s` : `${up.toFixed(2)}M/s`}
+                {formatBytes(serverInfo.status.NetOutSpeed)}/s
               </div>
             </div>
             <div className={"flex w-14 flex-col"}>
               <p className="text-muted-foreground text-xs">{t("Download")}</p>
               <div className="flex items-center font-semibold text-xs">
-                {down >= 1024 ? `${(down / 1024).toFixed(2)}G/s` : `${down.toFixed(2)}M/s`}
+                {formatBytes(serverInfo.status.NetInSpeed)}/s
               </div>
             </div>
           </section>
@@ -116,13 +116,13 @@ export default function ServerCard({ serverInfo }: { serverInfo: NezhaAPISafe })
                 variant="secondary"
                 className="flex-1 items-center justify-center text-nowrap rounded-[8px] border-muted-50 text-[11px] shadow-md shadow-neutral-200/30 dark:shadow-none"
               >
-                {t("Upload")}:{formatBytes(serverInfo.status.NetOutTransfer)}
+                {t("TotalUpload")}: {formatBytes(serverInfo.status.NetOutTransfer)}
               </Badge>
               <Badge
                 variant="outline"
                 className="flex-1 items-center justify-center text-nowrap rounded-[8px] text-[11px] shadow-md shadow-neutral-200/30 dark:shadow-none"
               >
-                {t("Download")}:{formatBytes(serverInfo.status.NetInTransfer)}
+                {t("TotalDownload")}: {formatBytes(serverInfo.status.NetInTransfer)}
               </Badge>
             </section>
           )}
