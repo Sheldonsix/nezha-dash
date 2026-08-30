@@ -1,5 +1,3 @@
-import { env } from "next-runtime-env"
-
 /**
  * Server-side environment variables
  */
@@ -22,6 +20,10 @@ export interface ServerEnvConfig {
   MyNodeQueryBaseUrl: string
   /** NodeStatus API base URL */
   NodeStatusBaseUrl: string
+  /** NodeStatus-Go admin username */
+  NodeStatusWebUsername: string
+  /** NodeStatus-Go admin password */
+  NodeStatusWebPassword: string
 }
 
 /**
@@ -66,6 +68,27 @@ export interface ClientEnvConfig {
   ShowServerDetailSummary: boolean
 }
 
+const clientEnvDefaults: Partial<Record<keyof ClientEnvConfig, string | undefined>> = {
+  NezhaFetchInterval: process.env.NEXT_PUBLIC_NezhaFetchInterval,
+  ShowFlag: process.env.NEXT_PUBLIC_ShowFlag,
+  DisableCartoon: process.env.NEXT_PUBLIC_DisableCartoon,
+  ShowTag: process.env.NEXT_PUBLIC_ShowTag,
+  ShowNetTransfer: process.env.NEXT_PUBLIC_ShowNetTransfer,
+  ForceUseSvgFlag: process.env.NEXT_PUBLIC_ForceUseSvgFlag,
+  FixedTopServerName: process.env.NEXT_PUBLIC_FixedTopServerName,
+  CustomLogo: process.env.NEXT_PUBLIC_CustomLogo,
+  CustomTitle: process.env.NEXT_PUBLIC_CustomTitle,
+  CustomDescription: process.env.NEXT_PUBLIC_CustomDescription,
+  Links: process.env.NEXT_PUBLIC_Links,
+  DisableIndex: process.env.NEXT_PUBLIC_DisableIndex,
+  ShowTagCount: process.env.NEXT_PUBLIC_ShowTagCount,
+  ShowIpInfo: process.env.NEXT_PUBLIC_ShowIpInfo,
+  Komari: process.env.NEXT_PUBLIC_Komari,
+  MyNodeQuery: process.env.NEXT_PUBLIC_MyNodeQuery,
+  NodeStatus: process.env.NEXT_PUBLIC_NodeStatus,
+  ShowServerDetailSummary: process.env.NEXT_PUBLIC_ShowServerDetailSummary,
+}
+
 /**
  * 环境变量键的类型定义
  */
@@ -100,8 +123,8 @@ export function getServerEnv<K extends keyof ServerEnvConfig>(key: K): string | 
  * @returns Environment variable value
  */
 export function getClientEnv<K extends keyof ClientEnvConfig>(key: K): string | undefined {
-  const envKey = `NEXT_PUBLIC_${key}`
-  const value = env(envKey)
+  const value =
+    typeof window === "undefined" ? process.env[`NEXT_PUBLIC_${key}`] : clientEnvDefaults[key]
   if (!value) {
     return undefined
   }
@@ -144,6 +167,8 @@ export function getAllEnvConfig(): { server: ServerEnvConfig; client: ClientEnvC
       KomariBaseUrl: getServerEnv("KomariBaseUrl") || "",
       MyNodeQueryBaseUrl: getServerEnv("MyNodeQueryBaseUrl") || "",
       NodeStatusBaseUrl: getServerEnv("NodeStatusBaseUrl") || "",
+      NodeStatusWebUsername: getServerEnv("NodeStatusWebUsername") || "",
+      NodeStatusWebPassword: getServerEnv("NodeStatusWebPassword") || "",
     },
     client: {
       NezhaFetchInterval: parseNumber(getClientEnv("NezhaFetchInterval"), 5000),

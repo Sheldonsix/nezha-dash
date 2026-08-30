@@ -27,7 +27,6 @@ const nextConfig = {
       allowedOrigins: ["*"],
     },
   },
-  reactCompiler: true,
   output: "standalone",
   logging: {
     fetches: {
