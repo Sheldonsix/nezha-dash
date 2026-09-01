@@ -22,6 +22,8 @@ import {
   updateNodeStatusAdminServer,
 } from "@/lib/nodestatus-admin"
 import { cn } from "@/lib/utils"
+import { BackIcon } from "@/components/Icon"
+import Link from "next/link"
 
 export const dynamic = "force-dynamic"
 const adminCookieName = "nodestatus_admin"
@@ -61,13 +63,13 @@ async function loginAdminAction(formData: FormData) {
   const expected = getEnv("NodeStatusWebPassword")
   if (!expected || !safeEqual(password, expected)) redirect("/admin?error=1")
 
-  ;(await cookies()).set(adminCookieName, adminCookieValue(), {
-    httpOnly: true,
-    maxAge: 60 * 60 * 24 * 7,
-    path: "/admin",
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-  })
+    ; (await cookies()).set(adminCookieName, adminCookieValue(), {
+      httpOnly: true,
+      maxAge: 60 * 60 * 24 * 7,
+      path: "/admin",
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+    })
   redirect("/admin")
 }
 
@@ -180,13 +182,18 @@ export default async function AdminPage({
     const unresolvedCount = events ? events.list.filter((event) => !event.resolved).length : null
 
     return (
-      <main className="mx-auto grid w-full max-w-5xl gap-4 md:gap-6">
+      <main className="mx-auto grid w-full max-w-5xl min-h-[calc(100vh-calc(var(--spacing)*16))]  gap-4 bg-background p-4 md:p-10 md:pt-8">
         <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div>
+          <div className="flex flex-col gap-3">
             <h1 className="font-semibold text-xl">NodeStatus Admin</h1>
-            <p className="text-muted-foreground text-sm">
-              SSR rendered management for {getEnv("NodeStatusWebUsername") || "admin"}
-            </p>
+            <Link href={"/"} >
+              <div
+                className="flex flex-none cursor-pointer items-center gap-0.5 break-all font-semibold text-xl leading-none tracking-tight transition-opacity duration-300 hover:opacity-50"
+              >
+                <BackIcon />
+                {getEnv("NodeStatusWebUsername") || "admin"}
+              </div>
+            </Link>
           </div>
           {getEnv("NEXT_PUBLIC_NodeStatus") !== "true" && (
             <Badge variant="outline" className="w-fit">
@@ -250,6 +257,7 @@ export default async function AdminPage({
                   <Th>节点</Th>
                   <Th>状态</Th>
                   <Th>地区</Th>
+                  <Th>类型</Th>
                   <Th>负载</Th>
                   <Th className="text-right">操作</Th>
                 </tr>
@@ -277,6 +285,9 @@ export default async function AdminPage({
                     <Td>
                       <div>{server.location || "-"}</div>
                       <div className="text-muted-foreground text-xs">{server.type || "-"}</div>
+                    </Td>
+                    <Td>
+                      <div>{server.type || "-"}</div>
                     </Td>
                     <Td>
                       <div>{server.load?.toFixed(2) ?? "-"}</div>

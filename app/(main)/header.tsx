@@ -12,6 +12,7 @@ import { SearchButton } from "@/components/SearchButton"
 import { ModeToggle } from "@/components/ThemeSwitcher"
 import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
+import { AdminButton } from "@/components/AdminButton"
 import getEnv from "@/lib/env-entry"
 
 interface TimeState {
@@ -151,6 +152,7 @@ function Header() {
           <div className="hidden sm:block">
             <Links />
           </div>
+          <AdminButton />
           <NetworkButton />
           <SearchButton />
           <LanguageSwitcher />
