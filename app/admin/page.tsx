@@ -182,7 +182,7 @@ export default async function AdminPage({
     const unresolvedCount = events ? events.list.filter((event) => !event.resolved).length : null
 
     return (
-      <main className="mx-auto grid w-full max-w-5xl min-h-[calc(100vh-calc(var(--spacing)*16))]  gap-4 bg-background p-4 md:p-10 md:pt-8">
+      <main className="mx-auto grid min-h-[calc(100vh-calc(var(--spacing)*16))] w-full max-w-5xl gap-4 bg-background p-4 md:p-10 md:pt-8">
         <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div className="flex flex-col gap-3">
             <h1 className="font-semibold text-xl">NodeStatus Admin</h1>
