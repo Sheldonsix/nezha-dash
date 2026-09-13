@@ -109,6 +109,7 @@ function Header() {
   const customLogo = getEnv("NEXT_PUBLIC_CustomLogo")
   const customTitle = getEnv("NEXT_PUBLIC_CustomTitle")
   const customDescription = getEnv("NEXT_PUBLIC_CustomDescription")
+  const isNodeStatus = getEnv("NEXT_PUBLIC_NodeStatus") === "true"
 
   const router = useRouter()
 
@@ -152,7 +153,7 @@ function Header() {
           <div className="hidden sm:block">
             <Links />
           </div>
-          <AdminButton />
+          {isNodeStatus && <AdminButton />}
           <NetworkButton />
           <SearchButton />
           <LanguageSwitcher />

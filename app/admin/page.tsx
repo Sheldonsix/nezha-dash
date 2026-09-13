@@ -1,13 +1,19 @@
 import { createHmac, timingSafeEqual } from "node:crypto"
+import countries from "i18n-iso-countries"
+import enLocale from "i18n-iso-countries/langs/en.json"
+import zhLocale from "i18n-iso-countries/langs/zh.json"
 import { AlertTriangle, CheckCircle2, Plus, Server, Trash2, Wifi, WifiOff } from "lucide-react"
 import { revalidatePath } from "next/cache"
 import { cookies } from "next/headers"
+import Link from "next/link"
 import { redirect } from "next/navigation"
 import { useTranslations } from "next-intl"
 import type React from "react"
+import { BackIcon } from "@/components/Icon"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { RegionAutoComplete } from "@/components/ui/region-autocomplete"
 import getEnv from "@/lib/env-entry"
 import {
   createNodeStatusAdminServer,
@@ -22,11 +28,12 @@ import {
   updateNodeStatusAdminServer,
 } from "@/lib/nodestatus-admin"
 import { cn } from "@/lib/utils"
-import { BackIcon } from "@/components/Icon"
-import Link from "next/link"
 
 export const dynamic = "force-dynamic"
 const adminCookieName = "nodestatus_admin"
+
+countries.registerLocale(enLocale)
+countries.registerLocale(zhLocale)
 
 type ServerRow = NodeStatusAdminServer & {
   online: boolean | null
@@ -77,6 +84,16 @@ function text(formData: FormData, key: string) {
   return String(formData.get(key) || "").trim()
 }
 
+function normalizeRegion(value: string) {
+  const trimmed = value.trim()
+  const code =
+    (/^[a-z]{2}$/i.test(trimmed) && countries.isValid(trimmed) && trimmed) ||
+    (/^[a-z]{3}$/i.test(trimmed) && countries.alpha3ToAlpha2(trimmed)) ||
+    countries.getAlpha2Code(trimmed, "zh") ||
+    countries.getAlpha2Code(trimmed, "en")
+  return code ? code.toUpperCase() : ""
+}
+
 async function createServerAction(formData: FormData) {
   "use server"
 
@@ -86,10 +103,12 @@ async function createServerAction(formData: FormData) {
   const name = text(formData, "name")
   const type = text(formData, "type")
   const location = text(formData, "location")
-  const region = text(formData, "region").toUpperCase()
-  if (!username || !password || !name || !type || !location || !region) {
+  const regionInput = text(formData, "region")
+  if (!username || !password || !name || !type || !location || !regionInput) {
     throw new Error("server fields are required")
   }
+  const region = normalizeRegion(regionInput)
+  if (!region) throw new Error("region must be an ISO alpha-2 code or country name")
 
   await createNodeStatusAdminServer({
     username,
@@ -182,14 +201,12 @@ export default async function AdminPage({
     const unresolvedCount = events ? events.list.filter((event) => !event.resolved).length : null
 
     return (
-      <main className="mx-auto grid min-h-[calc(100vh-calc(var(--spacing)*16))] w-full max-w-5xl gap-4 bg-background p-4 md:p-10 md:pt-8">
+      <main className="mx-auto grid w-full max-w-5xl gap-4 bg-background p-4 md:gap-6 md:p-10 md:pt-8">
         <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div className="flex flex-col gap-3">
             <h1 className="font-semibold text-xl">NodeStatus Admin</h1>
-            <Link href={"/"} >
-              <div
-                className="flex flex-none cursor-pointer items-center gap-0.5 break-all font-semibold text-xl leading-none tracking-tight transition-opacity duration-300 hover:opacity-50"
-              >
+            <Link href={"/"}>
+              <div className="flex flex-none cursor-pointer items-center gap-0.5 break-all font-semibold text-xl leading-none tracking-tight transition-opacity duration-300 hover:opacity-50">
                 <BackIcon />
                 {getEnv("NodeStatusWebUsername") || "admin"}
               </div>
@@ -233,7 +250,7 @@ export default async function AdminPage({
               <Input name="name" placeholder="名称" required />
               <Input name="type" placeholder="类型，例如 kvm" required />
               <Input name="location" placeholder="位置，例如 Tokyo" required />
-              <Input name="region" placeholder="国家/地区，例如 JP" maxLength={2} required />
+              <RegionAutoComplete name="region" required />
               <label className="flex items-center gap-2 text-sm">
                 <input name="disabled" type="checkbox" className="size-4 rounded border" />
                 禁用
