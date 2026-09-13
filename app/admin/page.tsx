@@ -9,6 +9,7 @@ import Link from "next/link"
 import { redirect } from "next/navigation"
 import { useTranslations } from "next-intl"
 import type React from "react"
+import { ConfirmSubmitButton } from "@/components/ConfirmSubmitButton"
 import { BackIcon } from "@/components/Icon"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -301,7 +302,6 @@ export default async function AdminPage({
                     </Td>
                     <Td>
                       <div>{server.location || "-"}</div>
-                      <div className="text-muted-foreground text-xs">{server.type || "-"}</div>
                     </Td>
                     <Td>
                       <div>{server.type || "-"}</div>
@@ -327,10 +327,16 @@ export default async function AdminPage({
                         </form>
                         <form action={deleteServerAction}>
                           <input type="hidden" name="username" value={server.username} />
-                          <Button type="submit" variant="destructive" size="sm" className="gap-2">
+                          <ConfirmSubmitButton
+                            type="submit"
+                            variant="destructive"
+                            size="sm"
+                            className="gap-2"
+                            message={`确认删除 ${server.name || server.username}?`}
+                          >
                             <Trash2 className="size-4" />
                             删除
-                          </Button>
+                          </ConfirmSubmitButton>
                         </form>
                       </div>
                     </Td>
@@ -347,9 +353,14 @@ export default async function AdminPage({
               <CardTitle className="text-base">故障记录</CardTitle>
               {events && (
                 <form action={deleteAllEventsAction}>
-                  <Button type="submit" variant="outline" size="sm">
+                  <ConfirmSubmitButton
+                    type="submit"
+                    variant="outline"
+                    size="sm"
+                    message="确认清空所有故障记录?"
+                  >
                     清空
-                  </Button>
+                  </ConfirmSubmitButton>
                 </form>
               )}
             </div>
@@ -486,10 +497,16 @@ function EventRow({ event }: { event: NodeStatusAdminEvent }) {
       <Td>
         <form action={deleteEventAction} className="flex justify-end">
           <input type="hidden" name="id" value={event.id} />
-          <Button type="submit" variant="destructive" size="sm" className="gap-2">
+          <ConfirmSubmitButton
+            type="submit"
+            variant="destructive"
+            size="sm"
+            className="gap-2"
+            message={`确认删除 ${event.username} 的故障记录?`}
+          >
             <Trash2 className="size-4" />
             删除
-          </Button>
+          </ConfirmSubmitButton>
         </form>
       </Td>
     </tr>
