@@ -281,39 +281,48 @@ export default async function AdminPage({
         </section>
 
         <Card>
-          <CardHeader>
-            <CardTitle className="text-base">新增节点</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form
-              action={createServerAction}
-              className="grid gap-3 md:grid-cols-3"
-            >
-              <Input name="username" placeholder="用户名" required />
-              <Input
-                name="password"
-                placeholder="密码"
-                required
-                type="password"
-              />
-              <Input name="name" placeholder="名称" required />
-              <Input name="type" placeholder="类型，例如 kvm" required />
-              <Input name="location" placeholder="位置，例如 Tokyo" required />
-              <RegionAutoComplete name="region" required />
-              <label className="flex items-center gap-2 text-sm">
-                <input
-                  name="disabled"
-                  type="checkbox"
-                  className="size-4 rounded border"
+          <details>
+            <summary className="cursor-pointer select-none p-6 font-semibold text-base leading-none tracking-tight">
+              新增节点
+            </summary>
+            <CardContent>
+              <form
+                action={createServerAction}
+                className="grid gap-3 md:grid-cols-3"
+              >
+                <Input name="username" placeholder="用户名" required />
+                <Input
+                  name="password"
+                  placeholder="密码"
+                  required
+                  type="password"
                 />
-                禁用
-              </label>
-              <Button type="submit" className="gap-2 md:col-start-3">
-                <Plus className="size-4" />
-                创建
-              </Button>
-            </form>
-          </CardContent>
+                <Input name="name" placeholder="名称" required />
+                <Input name="type" placeholder="类型，例如 kvm" required />
+                <Input
+                  name="location"
+                  placeholder="位置，例如 Tokyo"
+                  required
+                />
+                <RegionAutoComplete name="region" required />
+                <label className="flex items-center gap-2 text-sm">
+                  <input
+                    name="disabled"
+                    type="checkbox"
+                    className="size-4 rounded border"
+                  />
+                  禁用
+                </label>
+                <Button
+                  type="submit"
+                  className="gap-2 w-1/2 justify-self-end md:col-start-3"
+                >
+                  <Plus className="size-4" />
+                  创建
+                </Button>
+              </form>
+            </CardContent>
+          </details>
         </Card>
 
         <Card>
