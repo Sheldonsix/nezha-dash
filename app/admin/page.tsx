@@ -187,7 +187,8 @@ export default async function AdminPage({
     const liveByUsername = new Map(
       (snapshot?.servers ?? []).map((server) => [server.username, server]),
     )
-    const rows = servers.map((server): ServerRow => {
+    const eventList = events?.list ?? []
+    const rows = (servers ?? []).map((server): ServerRow => {
       const live = liveByUsername.get(server.username)
       return {
         ...server,
@@ -199,7 +200,7 @@ export default async function AdminPage({
       }
     })
     const onlineCount = snapshot ? rows.filter((server) => server.online).length : null
-    const unresolvedCount = events ? events.list.filter((event) => !event.resolved).length : null
+    const unresolvedCount = events ? eventList.filter((event) => !event.resolved).length : null
 
     return (
       <main className="mx-auto grid w-full max-w-5xl gap-4 bg-background p-4 md:gap-6 md:p-10 md:pt-8">
@@ -377,10 +378,10 @@ export default async function AdminPage({
                 </tr>
               </thead>
               <tbody>
-                {events?.list.map((event) => (
+                {eventList.map((event) => (
                   <EventRow key={event.id} event={event} />
                 ))}
-                {events && !events.list.length && (
+                {events && !eventList.length && (
                   <tr>
                     <Td colSpan={5} className="text-center text-muted-foreground">
                       暂无故障记录

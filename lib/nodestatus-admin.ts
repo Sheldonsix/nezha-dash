@@ -114,8 +114,9 @@ export function getNodeStatusSnapshot() {
   })
 }
 
-export function listNodeStatusAdminServers() {
-  return adminFetch<NodeStatusAdminServer[]>("/api/admin/servers")
+export async function listNodeStatusAdminServers() {
+  const servers = await adminFetch<NodeStatusAdminServer[] | null>("/api/admin/servers")
+  return Array.isArray(servers) ? servers : []
 }
 
 export function createNodeStatusAdminServer(
@@ -143,8 +144,14 @@ export function deleteNodeStatusAdminServer(username: string) {
   })
 }
 
-export function listNodeStatusAdminEvents(size = 10, offset = 0) {
-  return adminFetch<NodeStatusEventList>(`/api/admin/events?size=${size}&offset=${offset}`)
+export async function listNodeStatusAdminEvents(size = 10, offset = 0) {
+  const events = await adminFetch<NodeStatusEventList | null>(
+    `/api/admin/events?size=${size}&offset=${offset}`,
+  )
+  return {
+    count: Number(events?.count) || 0,
+    list: Array.isArray(events?.list) ? events.list : [],
+  }
 }
 
 export function deleteNodeStatusAdminEvent(id: number) {
