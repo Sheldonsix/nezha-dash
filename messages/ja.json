@@ -33,6 +33,13 @@
     "ErrorMessage": "パスワードが間違っています",
     "SuccessMessage": "ログイン成功"
   },
+  "AdminSignIn": {
+    "UsernameSignInMessage": "ユーザー名",
+    "PasswordSignInMessage": "パスワード",
+    "Submit": "ログイン",
+    "ErrorMessage": "ユーザー名またはパスワードが間違っています",
+    "SuccessMessage": "ログイン成功"
+  },
   "NetworkChartClient": {
     "avg_delay": "遅延",
     "packet_loss": "パケットロス率",

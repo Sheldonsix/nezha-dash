@@ -33,6 +33,13 @@
     "ErrorMessage": "Invalid password",
     "SuccessMessage": "Login successful"
   },
+  "AdminSignIn": {
+    "UsernameSignInMessage": "Username",
+    "PasswordSignInMessage": "Password",
+    "Submit": "Login",
+    "ErrorMessage": "Invalid username or password",
+    "SuccessMessage": "Login successful"
+  },
   "NetworkChartClient": {
     "avg_delay": "Latency",
     "packet_loss": "Packet Loss",

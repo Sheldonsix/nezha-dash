@@ -33,6 +33,13 @@
     "ErrorMessage": "密码错误",
     "SuccessMessage": "登录成功"
   },
+  "AdminSignIn": {
+    "UsernameSignInMessage": "用户名",
+    "PasswordSignInMessage": "密码",
+    "Submit": "登录",
+    "ErrorMessage": "用户名/密码错误",
+    "SuccessMessage": "登录成功"
+  },
   "NetworkChartClient": {
     "avg_delay": "延迟",
     "packet_loss": "丢包率",
