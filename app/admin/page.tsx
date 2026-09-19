@@ -329,6 +329,7 @@ export default async function AdminPage({
                   <Th>地区</Th>
                   <Th>类型</Th>
                   <Th>负载</Th>
+                  <Th>在线</Th>
                   <Th className="text-right">操作</Th>
                 </tr>
               </thead>
@@ -349,9 +350,6 @@ export default async function AdminPage({
                           <div className="font-medium">
                             {server.name || server.username}
                           </div>
-                          <div className="text-muted-foreground text-xs">
-                            {server.username}
-                          </div>
                         </div>
                       </div>
                     </Td>
@@ -371,10 +369,8 @@ export default async function AdminPage({
                     </Td>
                     <Td>
                       <div>{server.load?.toFixed(2) ?? '-'}</div>
-                      <div className="text-muted-foreground text-xs">
-                        {server.online ? formatUptime(server.uptime) : '-'}
-                      </div>
                     </Td>
+                    <Td>{server.online ? formatUptime(server.uptime) : '-'}</Td>
                     <Td>
                       <div className="flex justify-end gap-2">
                         <form action={toggleServerAction}>
