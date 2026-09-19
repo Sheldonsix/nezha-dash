@@ -517,16 +517,13 @@ function AdminLogin({ error }: { error: boolean }) {
           autoComplete="current-password"
         />
         {error && (
-          <p className="font-semibold text-red-500 text-sm">
+          <p className="col-start-2 font-semibold text-red-500 text-sm">
             {t('ErrorMessage')}
           </p>
         )}
-        <button
-          type="submit"
-          className="flex w-fit cursor-pointer items-center gap-1 rounded-[8px] border border-stone-300 bg-card px-1.5 py-0.5 font-semibold text-card-foreground text-sm shadow-lg shadow-stone-200/50 transition-all hover:brightness-95 dark:border-stone-800 dark:shadow-none"
-        >
+        <Button type="submit" className="col-start-2 w-1/2 justify-self-end">
           {t('Submit')}
-        </button>
+        </Button>
       </section>
     </form>
   );
