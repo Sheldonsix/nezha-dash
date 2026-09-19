@@ -5,6 +5,7 @@ import zhLocale from 'i18n-iso-countries/langs/zh.json';
 import {
   AlertTriangle,
   CheckCircle2,
+  Pencil,
   Plus,
   Server,
   Trash2,
@@ -147,6 +148,35 @@ async function createServerAction(formData: FormData) {
   revalidatePath('/admin');
 }
 
+async function updateServerAction(formData: FormData) {
+  'use server';
+
+  await requireAdmin();
+  const username = text(formData, 'username');
+  const password = text(formData, 'password');
+  const name = text(formData, 'name');
+  const type = text(formData, 'type');
+  const location = text(formData, 'location');
+  const regionInput = text(formData, 'region');
+  if (!username || !name || !type || !location || !regionInput) {
+    throw new Error('server fields are required');
+  }
+  const region = normalizeRegion(regionInput);
+  if (!region)
+    throw new Error('region must be an ISO alpha-2 code or country name');
+
+  await updateNodeStatusAdminServer(username, {
+    name,
+    type,
+    location,
+    region,
+    disabled: formData.get('disabled') === 'on',
+    ...(password ? { password } : {}),
+  });
+  revalidatePath('/admin');
+  redirect('/admin');
+}
+
 async function toggleServerAction(formData: FormData) {
   'use server';
 
@@ -190,7 +220,7 @@ async function deleteAllEventsAction() {
 export default async function AdminPage({
   searchParams,
 }: {
-  searchParams?: Promise<{ error?: string }>;
+  searchParams?: Promise<{ error?: string; edit?: string }>;
 }) {
   const missing = [
     !getEnv('NodeStatusBaseUrl') && 'NodeStatusBaseUrl',
@@ -199,8 +229,9 @@ export default async function AdminPage({
   ].filter(Boolean) as string[];
   if (missing.length) return <SetupNotice missing={missing} />;
 
+  const params = await searchParams;
   if (!(await isAdminSignedIn())) {
-    return <AdminLogin error={(await searchParams)?.error === '1'} />;
+    return <AdminLogin error={params?.error === '1'} />;
   }
 
   try {
@@ -231,6 +262,9 @@ export default async function AdminPage({
       : null;
     const unresolvedCount = events
       ? eventList.filter((event) => !event.resolved).length
+      : null;
+    const editingServer = params?.edit
+      ? rows.find((server) => server.username === params.edit)
       : null;
 
     return (
@@ -290,32 +324,10 @@ export default async function AdminPage({
                 action={createServerAction}
                 className="grid gap-3 md:grid-cols-3"
               >
-                <Input name="username" placeholder="用户名" required />
-                <Input
-                  name="password"
-                  placeholder="密码"
-                  required
-                  type="password"
-                />
-                <Input name="name" placeholder="名称" required />
-                <Input name="type" placeholder="类型，例如 kvm" required />
-                <Input
-                  name="location"
-                  placeholder="位置，例如 Tokyo"
-                  required
-                />
-                <RegionAutoComplete name="region" required />
-                <label className="flex items-center gap-2 text-sm">
-                  <input
-                    name="disabled"
-                    type="checkbox"
-                    className="size-4 rounded border"
-                  />
-                  禁用
-                </label>
+                <ServerFields showUsername passwordRequired />
                 <Button
                   type="submit"
-                  className="gap-2 w-1/2 justify-self-end md:col-start-3"
+                  className="w-1/2 gap-2 justify-self-end md:col-start-3"
                 >
                   <Plus className="size-4" />
                   创建
@@ -324,6 +336,35 @@ export default async function AdminPage({
             </CardContent>
           </details>
         </Card>
+
+        {editingServer && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">
+                编辑节点：{editingServer.name || editingServer.username}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form
+                action={updateServerAction}
+                className="grid gap-3 md:grid-cols-3"
+              >
+                <input
+                  type="hidden"
+                  name="username"
+                  value={editingServer.username}
+                />
+                <ServerFields server={editingServer} />
+                <div className="col-span-full flex justify-end gap-2">
+                  <Button asChild variant="outline">
+                    <Link href="/admin">取消</Link>
+                  </Button>
+                  <Button type="submit">保存</Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        )}
 
         <Card>
           <CardHeader>
@@ -382,6 +423,19 @@ export default async function AdminPage({
                     <Td>{server.online ? formatUptime(server.uptime) : '-'}</Td>
                     <Td>
                       <div className="flex justify-end gap-2">
+                        <Button
+                          asChild
+                          variant="outline"
+                          size="sm"
+                          className="gap-2"
+                        >
+                          <Link
+                            href={`/admin?edit=${encodeURIComponent(server.username)}`}
+                          >
+                            <Pencil className="size-4" />
+                            编辑
+                          </Link>
+                        </Button>
                         <form action={toggleServerAction}>
                           <input
                             type="hidden"
@@ -531,6 +585,60 @@ function AdminLogin({ error }: { error: boolean }) {
         </Button>
       </section>
     </form>
+  );
+}
+
+function ServerFields({
+  server,
+  showUsername = false,
+  passwordRequired = false,
+}: {
+  server?: NodeStatusAdminServer;
+  showUsername?: boolean;
+  passwordRequired?: boolean;
+}) {
+  return (
+    <>
+      {showUsername && <Input name="username" placeholder="用户名" required />}
+      <Input
+        name="password"
+        placeholder={passwordRequired ? '密码' : '密码（留空不修改）'}
+        required={passwordRequired}
+        type="password"
+      />
+      <Input
+        name="name"
+        placeholder="名称"
+        required
+        defaultValue={server?.name}
+      />
+      <Input
+        name="type"
+        placeholder="类型，例如 kvm"
+        required
+        defaultValue={server?.type}
+      />
+      <Input
+        name="location"
+        placeholder="位置，例如 Tokyo"
+        required
+        defaultValue={server?.location}
+      />
+      <RegionAutoComplete
+        name="region"
+        required
+        defaultValue={server?.region}
+      />
+      <label className="flex items-center gap-2 text-sm">
+        <input
+          name="disabled"
+          type="checkbox"
+          className="size-4 rounded border"
+          defaultChecked={server?.disabled}
+        />
+        禁用
+      </label>
+    </>
   );
 }
 
