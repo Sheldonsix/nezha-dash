@@ -41,6 +41,7 @@ import {
   updateOrderNodeStatusAdminServer,
 } from '@/lib/nodestatus-admin';
 import { cn } from '@/lib/utils';
+import { getTranslations } from 'next-intl/server';
 
 export const dynamic = 'force-dynamic';
 const adminCookieName = 'nodestatus_admin';
@@ -257,6 +258,8 @@ export default async function AdminPage({
     return <AdminLogin error={params?.error === '1'} />;
   }
 
+  const t = await getTranslations('AdminPage');
+
   try {
     const [servers, snapshot, events] = await Promise.all([
       listNodeStatusAdminServers(),
@@ -294,7 +297,7 @@ export default async function AdminPage({
       <main className="mx-auto grid w-full max-w-5xl gap-4 bg-background p-4 md:gap-6 md:p-10 md:pt-8">
         <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div className="flex flex-col gap-3">
-            <h1 className="font-semibold text-xl">NodeStatus Admin</h1>
+            <h1 className="font-semibold text-xl">{t('title')}</h1>
             <Link href={'/'}>
               <div className="flex flex-none cursor-pointer items-center gap-0.5 break-all font-semibold text-xl leading-none tracking-tight transition-opacity duration-300 hover:opacity-50">
                 <BackIcon />
@@ -304,12 +307,12 @@ export default async function AdminPage({
           </div>
           {getEnv('NEXT_PUBLIC_NodeStatus') !== 'true' && (
             <Badge variant="outline" className="w-fit">
-              主面板未启用 NodeStatus 模式
+              {t('nodeStatusNotEnabled')}
             </Badge>
           )}
           {!snapshot && (
             <Badge variant="secondary" className="w-fit">
-              状态快照暂不可用
+              {t('snapshotUnavailable')}
             </Badge>
           )}
         </header>
@@ -317,22 +320,22 @@ export default async function AdminPage({
         <section className="grid grid-cols-2 gap-4 lg:grid-cols-4">
           <StatCard
             icon={<Server className="size-4" />}
-            label="节点总数"
+            label={t('totalNodes')}
             value={rows.length}
           />
           <StatCard
             icon={<Wifi className="size-4" />}
-            label="在线"
+            label={t('online')}
             value={onlineCount ?? '-'}
           />
           <StatCard
             icon={<WifiOff className="size-4" />}
-            label="离线"
+            label={t('offline')}
             value={onlineCount === null ? '-' : rows.length - onlineCount}
           />
           <StatCard
             icon={<AlertTriangle className="size-4" />}
-            label="未恢复故障"
+            label={t('unresolvedEvents')}
             value={unresolvedCount ?? '-'}
           />
         </section>
@@ -340,7 +343,7 @@ export default async function AdminPage({
         <Card>
           <details>
             <summary className="cursor-pointer select-none p-6 font-semibold text-base leading-none tracking-tight">
-              新增节点
+              {t('addNode')}
             </summary>
             <CardContent>
               <form
@@ -353,7 +356,7 @@ export default async function AdminPage({
                   className="w-1/2 gap-2 justify-self-end md:col-start-3"
                 >
                   <Plus className="size-4" />
-                  创建
+                  {t('create')}
                 </Button>
               </form>
             </CardContent>
@@ -364,7 +367,9 @@ export default async function AdminPage({
           <Card>
             <CardHeader>
               <CardTitle className="text-base">
-                编辑节点：{editingServer.name || editingServer.username}
+                {t('editNode', {
+                  name: editingServer.name || editingServer.username,
+                })}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -380,9 +385,9 @@ export default async function AdminPage({
                 <ServerFields server={editingServer} />
                 <div className="col-span-full flex justify-end gap-2">
                   <Button asChild variant="outline">
-                    <Link href="/admin">取消</Link>
+                    <Link href="/admin">{t('cancel')}</Link>
                   </Button>
-                  <Button type="submit">保存</Button>
+                  <Button type="submit">{t('save')}</Button>
                 </div>
               </form>
             </CardContent>
@@ -391,19 +396,19 @@ export default async function AdminPage({
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">节点管理</CardTitle>
+            <CardTitle className="text-base">{t('nodeManagement')}</CardTitle>
           </CardHeader>
           <CardContent className="overflow-x-auto">
             <table className="w-full min-w-[820px] text-sm">
               <thead className="border-b text-muted-foreground">
                 <tr>
-                  <Th>节点</Th>
-                  <Th>状态</Th>
-                  <Th>地区</Th>
-                  <Th>类型</Th>
-                  <Th>负载</Th>
-                  <Th>在线</Th>
-                  <Th className="text-right">操作</Th>
+                  <Th>{t('node')}</Th>
+                  <Th>{t('status')}</Th>
+                  <Th>{t('region')}</Th>
+                  <Th>{t('type')}</Th>
+                  <Th>{t('load')}</Th>
+                  <Th>{t('uptime')}</Th>
+                  <Th className="text-right">{t('actions')}</Th>
                 </tr>
               </thead>
               <tbody>
@@ -430,7 +435,7 @@ export default async function AdminPage({
                       <div className="flex flex-wrap items-center gap-2">
                         <StatusBadge online={server.online} />
                         {server.disabled && (
-                          <Badge variant="secondary">已禁用</Badge>
+                          <Badge variant="secondary">{t('disabled')}</Badge>
                         )}
                       </div>
                     </Td>
@@ -454,8 +459,8 @@ export default async function AdminPage({
                             variant="outline"
                             size="sm"
                             disabled={index === 0}
-                            aria-label="up"
-                            title="up"
+                            aria-label={t('moveUp')}
+                            title={t('moveUp')}
                             className="px-2"
                           >
                             <ArrowUp className="size-4" />
@@ -469,8 +474,8 @@ export default async function AdminPage({
                             variant="outline"
                             size="sm"
                             disabled={index === rows.length - 1}
-                            aria-label="down"
-                            title="down"
+                            aria-label={t('moveDown')}
+                            title={t('moveDown')}
                             className="px-2"
                           >
                             <ArrowDown className="size-4" />
@@ -486,7 +491,7 @@ export default async function AdminPage({
                             href={`/admin?edit=${encodeURIComponent(server.username)}`}
                           >
                             <Pencil className="size-4" />
-                            编辑
+                            {t('edit')}
                           </Link>
                         </Button>
                         <form action={toggleServerAction}>
@@ -501,7 +506,7 @@ export default async function AdminPage({
                             value={server.disabled ? 'false' : 'true'}
                           />
                           <Button type="submit" variant="outline" size="sm">
-                            {server.disabled ? '启用' : '禁用'}
+                            {server.disabled ? t('enable') : t('disable')}
                           </Button>
                         </form>
                         <form action={deleteServerAction}>
@@ -515,10 +520,12 @@ export default async function AdminPage({
                             variant="destructive"
                             size="sm"
                             className="gap-2"
-                            message={`确认删除 ${server.name || server.username}?`}
+                            message={t('confirmDeleteNode', {
+                              name: server.name || server.username,
+                            })}
                           >
                             <Trash2 className="size-4" />
-                            删除
+                            {t('delete')}
                           </ConfirmSubmitButton>
                         </form>
                       </div>
@@ -533,16 +540,16 @@ export default async function AdminPage({
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between gap-3">
-              <CardTitle className="text-base">故障记录</CardTitle>
+              <CardTitle className="text-base">{t('events')}</CardTitle>
               {events && (
                 <form action={deleteAllEventsAction}>
                   <ConfirmSubmitButton
                     type="submit"
                     variant="outline"
                     size="sm"
-                    message="确认清空所有故障记录?"
+                    message={t('confirmClearEvents')}
                   >
-                    清空
+                    {t('clear')}
                   </ConfirmSubmitButton>
                 </form>
               )}
@@ -552,11 +559,11 @@ export default async function AdminPage({
             <table className="w-full min-w-[680px] text-sm">
               <thead className="border-b text-muted-foreground">
                 <tr>
-                  <Th>节点</Th>
-                  <Th>状态</Th>
-                  <Th>创建时间</Th>
-                  <Th>恢复时间</Th>
-                  <Th className="text-right">操作</Th>
+                  <Th>{t('node')}</Th>
+                  <Th>{t('status')}</Th>
+                  <Th>{t('createdAt')}</Th>
+                  <Th>{t('resolvedAt')}</Th>
+                  <Th className="text-right">{t('actions')}</Th>
                 </tr>
               </thead>
               <tbody>
@@ -569,7 +576,7 @@ export default async function AdminPage({
                       colSpan={5}
                       className="text-center text-muted-foreground"
                     >
-                      暂无故障记录
+                      {t('noEvents')}
                     </Td>
                   </tr>
                 )}
@@ -579,7 +586,7 @@ export default async function AdminPage({
                       colSpan={5}
                       className="text-center text-muted-foreground"
                     >
-                      故障记录暂不可用
+                      {t('eventsUnavailable')}
                     </Td>
                   </tr>
                 )}
@@ -650,35 +657,39 @@ function ServerFields({
   showUsername?: boolean;
   passwordRequired?: boolean;
 }) {
+  const t = useTranslations('AdminPage');
   return (
     <>
-      {showUsername && <Input name="username" placeholder="用户名" required />}
+      {showUsername && (
+        <Input name="username" placeholder={t('username')} required />
+      )}
       <Input
         name="password"
-        placeholder={passwordRequired ? '密码' : '密码（留空不修改）'}
+        placeholder={passwordRequired ? t('password') : t('passwordKeep')}
         required={passwordRequired}
         type="password"
       />
       <Input
         name="name"
-        placeholder="名称"
+        placeholder={t('name')}
         required
         defaultValue={server?.name}
       />
       <Input
         name="type"
-        placeholder="类型，例如 kvm"
+        placeholder={t('typePlaceholder')}
         required
         defaultValue={server?.type}
       />
       <Input
         name="location"
-        placeholder="位置，例如 Tokyo"
+        placeholder={t('locationPlaceholder')}
         required
         defaultValue={server?.location}
       />
       <RegionAutoComplete
         name="region"
+        placeholder={t('regionPlaceholder')}
         required
         defaultValue={server?.region}
       />
@@ -689,7 +700,7 @@ function ServerFields({
           className="size-4 rounded border"
           defaultChecked={server?.disabled}
         />
-        禁用
+        {t('disable')}
       </label>
     </>
   );
@@ -718,16 +729,17 @@ function StatCard({
 }
 
 function SetupNotice({ missing }: { missing: string[] }) {
+  const t = useTranslations('AdminPage');
   return (
     <main className="mx-auto w-full max-w-5xl">
       <Card>
         <CardContent className="space-y-3 p-6">
           <div className="flex items-center gap-2 font-semibold">
             <AlertTriangle className="size-4" />
-            Admin 未启用
+            {t('adminDisabled')}
           </div>
           <p className="text-muted-foreground text-sm">
-            缺少环境变量：{missing.join(', ')}
+            {t('missingEnv', { vars: missing.join(', ') })}
           </p>
         </CardContent>
       </Card>
@@ -736,13 +748,14 @@ function SetupNotice({ missing }: { missing: string[] }) {
 }
 
 function ErrorNotice({ message }: { message: string }) {
+  const t = useTranslations('AdminPage');
   return (
     <main className="mx-auto w-full max-w-5xl">
       <Card>
         <CardContent className="space-y-3 p-6">
           <div className="flex items-center gap-2 font-semibold text-destructive">
             <AlertTriangle className="size-4" />
-            NodeStatus Admin 请求失败
+            {t('requestFailed')}
           </div>
           <p className="text-muted-foreground text-sm">{message}</p>
         </CardContent>
@@ -752,14 +765,15 @@ function ErrorNotice({ message }: { message: string }) {
 }
 
 function EventRow({ event }: { event: NodeStatusAdminEvent }) {
+  const t = useTranslations('AdminPage');
   return (
     <tr className="border-b last:border-0">
       <Td>{event.username}</Td>
       <Td>
         {event.resolved ? (
-          <Badge variant="secondary">已恢复</Badge>
+          <Badge variant="secondary">{t('resolved')}</Badge>
         ) : (
-          <Badge>未恢复</Badge>
+          <Badge>{t('unresolved')}</Badge>
         )}
       </Td>
       <Td>{formatDate(event.created_at)}</Td>
@@ -772,10 +786,10 @@ function EventRow({ event }: { event: NodeStatusAdminEvent }) {
             variant="destructive"
             size="sm"
             className="gap-2"
-            message={`确认删除 ${event.username} 的故障记录?`}
+            message={t('confirmDeleteEvent', { name: event.username })}
           >
             <Trash2 className="size-4" />
-            删除
+            {t('delete')}
           </ConfirmSubmitButton>
         </form>
       </Td>
@@ -796,14 +810,15 @@ function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
 }
 
 function StatusBadge({ online }: { online: boolean | null }) {
-  if (online === null) return <Badge variant="secondary">未知</Badge>;
+  const t = useTranslations('AdminPage');
+  if (online === null) return <Badge variant="secondary">{t('unknown')}</Badge>;
   return online ? (
     <Badge className="gap-1 bg-green-600 text-white">
       <CheckCircle2 className="size-3" />
-      在线
+      {t('online')}
     </Badge>
   ) : (
-    <Badge variant="destructive">离线</Badge>
+    <Badge variant="destructive">{t('offline')}</Badge>
   );
 }
 
