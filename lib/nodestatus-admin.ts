@@ -149,6 +149,13 @@ export function updateNodeStatusAdminServer(
   });
 }
 
+export function updateOrderNodeStatusAdminServer(order: number[]) {
+  return adminFetch<null>('/api/admin/servers/order', {
+    method: 'PUT',
+    body: JSON.stringify({ order: [...order].reverse() }),
+  });
+}
+
 export function deleteNodeStatusAdminServer(username: string) {
   return adminFetch<null>(
     `/api/admin/servers/${encodeURIComponent(username)}`,

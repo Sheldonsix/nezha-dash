@@ -4,6 +4,8 @@ import enLocale from 'i18n-iso-countries/langs/en.json';
 import zhLocale from 'i18n-iso-countries/langs/zh.json';
 import {
   AlertTriangle,
+  ArrowDown,
+  ArrowUp,
   CheckCircle2,
   Pencil,
   Plus,
@@ -36,6 +38,7 @@ import {
   type NodeStatusAdminEvent,
   type NodeStatusAdminServer,
   updateNodeStatusAdminServer,
+  updateOrderNodeStatusAdminServer,
 } from '@/lib/nodestatus-admin';
 import { cn } from '@/lib/utils';
 
@@ -217,6 +220,26 @@ async function deleteAllEventsAction() {
   revalidatePath('/admin');
 }
 
+async function moveServerAction(formData: FormData) {
+  'use server';
+
+  await requireAdmin();
+
+  const id = Number(text(formData, 'id'));
+  const direction = text(formData, 'direction');
+  if (direction !== 'up' && direction !== 'down') return;
+
+  const order = (await listNodeStatusAdminServers()).map((server) => server.id);
+  const index = order.indexOf(id);
+  const target = direction === 'up' ? index - 1 : index + 1;
+
+  if (index < 0 || target < 0 || target >= order.length) return;
+
+  [order[index], order[target]] = [order[target], order[index]];
+  await updateOrderNodeStatusAdminServer(order);
+  revalidatePath('/admin');
+}
+
 export default async function AdminPage({
   searchParams,
 }: {
@@ -384,7 +407,7 @@ export default async function AdminPage({
                 </tr>
               </thead>
               <tbody>
-                {rows.map((server) => (
+                {rows.map((server, index) => (
                   <tr key={server.id} className="border-b last:border-0">
                     <Td>
                       <div className="flex items-center gap-3">
@@ -423,6 +446,36 @@ export default async function AdminPage({
                     <Td>{server.online ? formatUptime(server.uptime) : '-'}</Td>
                     <Td>
                       <div className="flex justify-end gap-2">
+                        <form action={moveServerAction}>
+                          <input type="hidden" name="id" value={server.id} />
+                          <input type="hidden" name="direction" value="up" />
+                          <Button
+                            type="submit"
+                            variant="outline"
+                            size="sm"
+                            disabled={index === 0}
+                            aria-label="up"
+                            title="up"
+                            className="px-2"
+                          >
+                            <ArrowUp className="size-4" />
+                          </Button>
+                        </form>
+                        <form action={moveServerAction}>
+                          <input type="hidden" name="id" value={server.id} />
+                          <input type="hidden" name="direction" value="down" />
+                          <Button
+                            type="submit"
+                            variant="outline"
+                            size="sm"
+                            disabled={index === rows.length - 1}
+                            aria-label="down"
+                            title="down"
+                            className="px-2"
+                          >
+                            <ArrowDown className="size-4" />
+                          </Button>
+                        </form>
                         <Button
                           asChild
                           variant="outline"
