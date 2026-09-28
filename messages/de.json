@@ -1,0 +1,201 @@
+{
+  "ServerOverviewClient": {
+    "p_816-881_Totalservers": "Server insgesamt",
+    "p_1610-1676_Onlineservers": "Server online",
+    "p_2532-2599_Offlineservers": "Server offline",
+    "network": "Netzwerk",
+    "error_message": "Bitte überprüfen Sie Ihre Umgebungsvariablen und die Serverkonsole"
+  },
+  "ServerListClient": {
+    "error_message": "Bitte überprüfen Sie Ihre Umgebungsvariablen und die Serverkonsole",
+    "defaultTag": "Alle",
+    "connecting": "Verbindung wird hergestellt"
+  },
+  "ServerCard": {
+    "System": "System",
+    "CPU": "CPU",
+    "Mem": "Arbeitsspeicher",
+    "STG": "Speicher",
+    "Upload": "Upload",
+    "Download": "Download",
+    "Uptime": "Laufzeit",
+    "TotalUpload": "Upload",
+    "TotalDownload": "Download"
+  },
+  "TabSwitch": {
+    "Detail": "Details",
+    "Network": "Netzwerk",
+    "disabled_tooltip": "Diese Funktion ist im aktuellen Modus nicht verfügbar"
+  },
+  "SignIn": {
+    "SignInMessage": "Bitte geben Sie das Passwort ein",
+    "Submit": "Anmelden",
+    "ErrorMessage": "Ungültiges Passwort",
+    "SuccessMessage": "Anmeldung erfolgreich"
+  },
+  "AdminSignIn": {
+    "UsernameSignInMessage": "Benutzername",
+    "PasswordSignInMessage": "Passwort",
+    "Submit": "Anmelden",
+    "ErrorMessage": "Ungültiger Benutzername oder ungültiges Passwort",
+    "SuccessMessage": "Anmeldung erfolgreich"
+  },
+  "AdminPage": {
+    "title": "NodeStatus Admin",
+    "nodeStatusNotEnabled": "Der NodeStatus-Modus ist im Haupt-Dashboard nicht aktiviert",
+    "snapshotUnavailable": "Status-Snapshot nicht verfügbar",
+    "totalNodes": "Knoten insgesamt",
+    "online": "Online",
+    "offline": "Offline",
+    "unresolvedEvents": "Ungelöste Vorfälle",
+    "addNode": "Knoten hinzufügen",
+    "create": "Erstellen",
+    "editNode": "Knoten bearbeiten: {name}",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "nodeManagement": "Knotenverwaltung",
+    "node": "Knoten",
+    "status": "Status",
+    "region": "Region",
+    "type": "Typ",
+    "load": "Auslastung",
+    "uptime": "Laufzeit",
+    "actions": "Aktionen",
+    "disabled": "Deaktiviert",
+    "edit": "Bearbeiten",
+    "enable": "Aktivieren",
+    "disable": "Deaktivieren",
+    "delete": "Löschen",
+    "moveUp": "Nach oben",
+    "moveDown": "Nach unten",
+    "confirmDeleteNode": "{name} löschen?",
+    "confirmDeleteEvent": "Vorfallseintrag für {name} löschen?",
+    "events": "Vorfallseinträge",
+    "clear": "Leeren",
+    "confirmClearEvents": "Alle Vorfallseinträge löschen?",
+    "createdAt": "Erstellt am",
+    "resolvedAt": "Behoben am",
+    "noEvents": "Keine Vorfallseinträge",
+    "eventsUnavailable": "Vorfallseinträge nicht verfügbar",
+    "adminDisabled": "Admin ist nicht aktiviert",
+    "missingEnv": "Fehlende Umgebungsvariablen: {vars}",
+    "requestFailed": "NodeStatus-Admin-Anfrage fehlgeschlagen",
+    "resolved": "Behoben",
+    "unresolved": "Nicht behoben",
+    "unknown": "Unbekannt",
+    "username": "Benutzername",
+    "password": "Passwort",
+    "passwordKeep": "Passwort (leer lassen, um es beizubehalten)",
+    "name": "Name",
+    "typePlaceholder": "Typ, z. B. kvm",
+    "locationPlaceholder": "Standort, z. B. Tokio",
+    "regionPlaceholder": "Code wie DE eingeben",
+    "copyInstallCommand": "Installationsbefehl kopieren",
+    "copied": "Kopiert",
+    "copyFailed": "Kopieren fehlgeschlagen"
+  },
+  "NetworkChartClient": {
+    "avg_delay": "Latenz",
+    "packet_loss": "Paketverlust",
+    "chart_fetch_error_message": "Netzwerkdaten konnten nicht abgerufen werden. Bitte prüfen Sie, ob die Serverüberwachung aktiviert ist"
+  },
+  "IPInfo": {
+    "analysing": "IP-Informationen werden analysiert...",
+    "asn_number": "Ursprungs-ASN",
+    "registered_country": "Registriertes Land",
+    "time_zone": "Zeitzone",
+    "postal_code": "Postleitzahl",
+    "city": "Stadt",
+    "longitude": "Längengrad",
+    "latitude": "Breitengrad"
+  },
+  "NetworkChart": {
+    "avg_delay": "Latenz",
+    "packet_loss": "Paketverlust",
+    "ServerMonitorCount": "Dienste",
+    "peak_cut": "Spitzenbegrenzung"
+  },
+  "ServerDetailClient": {
+    "detail_fetch_error_message": "Bitte überprüfen Sie Ihre Umgebungsvariablen und die Serverkonsole",
+    "status": "Status",
+    "Online": "Online",
+    "Offline": "Offline",
+    "Uptime": "Laufzeit",
+    "Days": "Tage",
+    "Hours": "Stunden",
+    "Version": "Version",
+    "Arch": "Architektur",
+    "Mem": "Arbeitsspeicher",
+    "Disk": "Speicher",
+    "Region": "Region",
+    "System": "System",
+    "CPU": "CPU",
+    "Upload": "Upload",
+    "Download": "Download",
+    "Load": "Auslastung",
+    "LastActive": "Zuletzt aktiv",
+    "BootTime": "Startzeit"
+  },
+  "ServerDetailChartClient": {
+    "chart_fetch_error_message": "Bitte überprüfen Sie Ihre Umgebungsvariablen und die Serverkonsole",
+    "Process": "Prozesse",
+    "Disk": "Speicher",
+    "Mem": "Arbeitsspeicher",
+    "Swap": "Auslagerungsspeicher",
+    "Upload": "Upload",
+    "Download": "Download"
+  },
+  "ThemeSwitcher": {
+    "Light": "Hell",
+    "Dark": "Dunkel",
+    "System": "System"
+  },
+  "Footer": {
+    "p_146-598_Findthecodeon": "Den Code finden Sie auf",
+    "a_303-585_GitHub": "GitHub",
+    "section_607-869_2020": "© 2020-",
+    "a_800-850_Hamster1963": "@Hamster1963"
+  },
+  "Header": {
+    "p_1079-1199_Simpleandbeautifuldashbo": "Einfaches und ansprechendes Dashboard"
+  },
+  "Overview": {
+    "p_2277-2331_Overview": "Übersicht",
+    "p_2390-2457_wherethetimeis": "wo die Zeit ist"
+  },
+  "Global": {
+    "Loading": "Wird geladen...",
+    "Distributions": "Server sind verteilt auf",
+    "Regions": "Regionen",
+    "Servers": "Server"
+  },
+  "NotFoundPage": {
+    "h1_490-590_404NotFound": "Server nicht gefunden",
+    "h1_490-590_404NotFoundBack": " Hier klicken, um zurückzukehren"
+  },
+  "NetworkPage": {
+    "title": "Netzwerk-Latenzdiagramme",
+    "description": "Netzwerklatenz verschiedener Server anzeigen und vergleichen"
+  },
+  "AggregatedNetworkCharts": {
+    "loading": "Wird geladen...",
+    "no_online_servers": "Keine Online-Server verfügbar",
+    "server_selection": "Serverauswahl",
+    "no_servers_selected": "Keine Server ausgewählt. Bitte wählen Sie mindestens einen Server aus, um Diagramme anzuzeigen.",
+    "multi_select_mode": "Mehrfachauswahl",
+    "single_select_mode": "Einzelauswahl",
+    "select_servers_multi": "Mehrere Server zum Vergleichen auswählen",
+    "select_server_single": "Einen Server zur Überwachung auswählen"
+  },
+  "DashCommand": {
+    "TypeCommand": "Befehl eingeben oder suchen...",
+    "NoResults": "Keine Ergebnisse gefunden.",
+    "Servers": "Server",
+    "Shortcuts": "Tastenkürzel",
+    "ToggleLightMode": "Hellen Modus aktivieren",
+    "ToggleDarkMode": "Dunklen Modus aktivieren",
+    "ToggleSystemMode": "Systemmodus aktivieren",
+    "Home": "Startseite",
+    "NetworkCharts": "Netzwerkdiagramme"
+  }
+}
