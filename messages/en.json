@@ -89,7 +89,10 @@
     "name": "Name",
     "typePlaceholder": "Type, e.g. kvm",
     "locationPlaceholder": "Location, e.g. Tokyo",
-    "regionPlaceholder": "Enter a code like JP"
+    "regionPlaceholder": "Enter a code like JP",
+    "copyInstallCommand": "Copy install command",
+    "copied": "Copied",
+    "copyFailed": "Copy failed"
   },
   "NetworkChartClient": {
     "avg_delay": "Latency",

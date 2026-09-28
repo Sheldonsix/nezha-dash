@@ -89,7 +89,10 @@
     "name": "名稱",
     "typePlaceholder": "類型，例如 kvm",
     "locationPlaceholder": "位置，例如 Tokyo",
-    "regionPlaceholder": "請輸入代碼如 JP"
+    "regionPlaceholder": "請輸入代碼如 JP",
+    "copyInstallCommand": "複製安裝命令",
+    "copied": "已複製",
+    "copyFailed": "複製失敗"
   },
   "NetworkChartClient": {
     "avg_delay": "延遲",

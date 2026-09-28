@@ -89,7 +89,10 @@
     "name": "名前",
     "typePlaceholder": "タイプ（例：kvm）",
     "locationPlaceholder": "場所（例：Tokyo）",
-    "regionPlaceholder": "JP などのコードを入力"
+    "regionPlaceholder": "JP などのコードを入力",
+    "copyInstallCommand": "インストールコマンドをコピー",
+    "copied": "コピーしました",
+    "copyFailed": "コピーに失敗しました"
   },
   "NetworkChartClient": {
     "avg_delay": "遅延",

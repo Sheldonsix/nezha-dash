@@ -8,7 +8,6 @@ import {
   ArrowUp,
   CheckCircle2,
   Pencil,
-  Plus,
   Server,
   Trash2,
   Wifi,
@@ -19,8 +18,10 @@ import { cookies } from 'next/headers';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 import type React from 'react';
 import { ConfirmSubmitButton } from '@/components/ConfirmSubmitButton';
+import { CreateServerForm } from '@/components/CreateServerForm';
 import { BackIcon } from '@/components/Icon';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -41,10 +42,15 @@ import {
   updateOrderNodeStatusAdminServer,
 } from '@/lib/nodestatus-admin';
 import { cn } from '@/lib/utils';
-import { getTranslations } from 'next-intl/server';
+import {
+  CreatedNodeCommandProvider,
+  CreatedNodeCopyButton,
+} from '@/components/CreatedNodeCommand';
 
 export const dynamic = 'force-dynamic';
 const adminCookieName = 'nodestatus_admin';
+const installScriptUrl =
+  'https://raw.githubusercontent.com/Sheldonsix/nodestatus-go/main/scripts/install-client-go.sh';
 
 countries.registerLocale(enLocale);
 countries.registerLocale(zhLocale);
@@ -61,6 +67,22 @@ function safeEqual(a: string, b: string) {
   const left = Buffer.from(a);
   const right = Buffer.from(b);
   return left.length === right.length && timingSafeEqual(left, right);
+}
+
+function shellQuote(value: string) {
+  return `'${value.replaceAll("'", "'\\''")}'`;
+}
+
+function createInstallCommand(username: string, password: string) {
+  const baseUrl = getEnv('NodeStatusBaseUrl');
+  if (!baseUrl) throw new Error('NodeStatusBaseUrl is required');
+
+  const serverUrl = new URL(baseUrl).origin;
+
+  return [
+    `wget -O /tmp/nodestatus-client-install.sh ${installScriptUrl}`,
+    `sh /tmp/nodestatus-client-install.sh --server ${shellQuote(serverUrl)} --username ${shellQuote(username)} --password ${shellQuote(password)}`,
+  ].join(' && ');
 }
 
 function adminCookieValue() {
@@ -123,7 +145,10 @@ function normalizeRegion(value: string) {
   return code ? code.toUpperCase() : '';
 }
 
-async function createServerAction(formData: FormData) {
+async function createServerAction(
+  _previousState: { command: string; username: string },
+  formData: FormData,
+) {
   'use server';
 
   await requireAdmin();
@@ -140,6 +165,8 @@ async function createServerAction(formData: FormData) {
   if (!region)
     throw new Error('region must be an ISO alpha-2 code or country name');
 
+  const command = createInstallCommand(username, password);
+
   await createNodeStatusAdminServer({
     username,
     password,
@@ -150,6 +177,8 @@ async function createServerAction(formData: FormData) {
     disabled: formData.get('disabled') === 'on',
   });
   revalidatePath('/admin');
+
+  return { command, username };
 }
 
 async function updateServerAction(formData: FormData) {
@@ -294,307 +323,314 @@ export default async function AdminPage({
       : null;
 
     return (
-      <main className="mx-auto grid w-full max-w-5xl gap-4 bg-background p-4 md:gap-6 md:p-10 md:pt-8">
-        <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div className="flex flex-col gap-3">
-            <h1 className="font-semibold text-xl">{t('title')}</h1>
-            <Link href={'/'}>
-              <div className="flex flex-none cursor-pointer items-center gap-0.5 break-all font-semibold text-xl leading-none tracking-tight transition-opacity duration-300 hover:opacity-50">
-                <BackIcon />
-                {getEnv('NodeStatusWebUsername') || 'admin'}
-              </div>
-            </Link>
-          </div>
-          {getEnv('NEXT_PUBLIC_NodeStatus') !== 'true' && (
-            <Badge variant="outline" className="w-fit">
-              {t('nodeStatusNotEnabled')}
-            </Badge>
-          )}
-          {!snapshot && (
-            <Badge variant="secondary" className="w-fit">
-              {t('snapshotUnavailable')}
-            </Badge>
-          )}
-        </header>
+      <CreatedNodeCommandProvider>
+        <main className="mx-auto grid w-full max-w-5xl gap-4 bg-background p-4 md:gap-6 md:p-10 md:pt-8">
+          <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div className="flex flex-col gap-3">
+              <h1 className="font-semibold text-xl">{t('title')}</h1>
+              <Link href={'/'}>
+                <div className="flex flex-none cursor-pointer items-center gap-0.5 break-all font-semibold text-xl leading-none tracking-tight transition-opacity duration-300 hover:opacity-50">
+                  <BackIcon />
+                  {getEnv('NodeStatusWebUsername') || 'admin'}
+                </div>
+              </Link>
+            </div>
+            {getEnv('NEXT_PUBLIC_NodeStatus') !== 'true' && (
+              <Badge variant="outline" className="w-fit">
+                {t('nodeStatusNotEnabled')}
+              </Badge>
+            )}
+            {!snapshot && (
+              <Badge variant="secondary" className="w-fit">
+                {t('snapshotUnavailable')}
+              </Badge>
+            )}
+          </header>
 
-        <section className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-          <StatCard
-            icon={<Server className="size-4" />}
-            label={t('totalNodes')}
-            value={rows.length}
-          />
-          <StatCard
-            icon={<Wifi className="size-4" />}
-            label={t('online')}
-            value={onlineCount ?? '-'}
-          />
-          <StatCard
-            icon={<WifiOff className="size-4" />}
-            label={t('offline')}
-            value={onlineCount === null ? '-' : rows.length - onlineCount}
-          />
-          <StatCard
-            icon={<AlertTriangle className="size-4" />}
-            label={t('unresolvedEvents')}
-            value={unresolvedCount ?? '-'}
-          />
-        </section>
+          <section className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+            <StatCard
+              icon={<Server className="size-4" />}
+              label={t('totalNodes')}
+              value={rows.length}
+            />
+            <StatCard
+              icon={<Wifi className="size-4" />}
+              label={t('online')}
+              value={onlineCount ?? '-'}
+            />
+            <StatCard
+              icon={<WifiOff className="size-4" />}
+              label={t('offline')}
+              value={onlineCount === null ? '-' : rows.length - onlineCount}
+            />
+            <StatCard
+              icon={<AlertTriangle className="size-4" />}
+              label={t('unresolvedEvents')}
+              value={unresolvedCount ?? '-'}
+            />
+          </section>
 
-        <Card>
-          <details>
-            <summary className="cursor-pointer select-none p-6 font-semibold text-base leading-none tracking-tight">
-              {t('addNode')}
-            </summary>
-            <CardContent>
-              <form
-                action={createServerAction}
-                className="grid gap-3 md:grid-cols-3"
-              >
-                <ServerFields showUsername passwordRequired />
-                <Button
-                  type="submit"
-                  className="w-1/2 gap-2 justify-self-end md:col-start-3"
+          <Card>
+            <details>
+              <summary className="cursor-pointer select-none p-6 font-semibold text-base leading-none tracking-tight">
+                {t('addNode')}
+              </summary>
+              <CardContent>
+                <CreateServerForm
+                  createAction={createServerAction}
+                  createLabel={t('create')}
                 >
-                  <Plus className="size-4" />
-                  {t('create')}
-                </Button>
-              </form>
-            </CardContent>
-          </details>
-        </Card>
+                  <ServerFields showUsername passwordRequired />
+                </CreateServerForm>
+              </CardContent>
+            </details>
+          </Card>
 
-        {editingServer && (
+          {editingServer && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">
+                  {t('editNode', {
+                    name: editingServer.name || editingServer.username,
+                  })}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form
+                  action={updateServerAction}
+                  className="grid gap-3 md:grid-cols-3"
+                >
+                  <input
+                    type="hidden"
+                    name="username"
+                    value={editingServer.username}
+                  />
+                  <ServerFields server={editingServer} />
+                  <div className="col-span-full flex justify-end gap-2">
+                    <Button asChild variant="outline">
+                      <Link href="/admin">{t('cancel')}</Link>
+                    </Button>
+                    <Button type="submit">{t('save')}</Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          )}
+
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">
-                {t('editNode', {
-                  name: editingServer.name || editingServer.username,
-                })}
-              </CardTitle>
+              <CardTitle className="text-base">{t('nodeManagement')}</CardTitle>
             </CardHeader>
-            <CardContent>
-              <form
-                action={updateServerAction}
-                className="grid gap-3 md:grid-cols-3"
-              >
-                <input
-                  type="hidden"
-                  name="username"
-                  value={editingServer.username}
-                />
-                <ServerFields server={editingServer} />
-                <div className="col-span-full flex justify-end gap-2">
-                  <Button asChild variant="outline">
-                    <Link href="/admin">{t('cancel')}</Link>
-                  </Button>
-                  <Button type="submit">{t('save')}</Button>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
-        )}
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">{t('nodeManagement')}</CardTitle>
-          </CardHeader>
-          <CardContent className="overflow-x-auto">
-            <table className="w-full min-w-[820px] text-sm">
-              <thead className="border-b text-muted-foreground">
-                <tr>
-                  <Th>{t('node')}</Th>
-                  <Th>{t('status')}</Th>
-                  <Th>{t('region')}</Th>
-                  <Th>{t('type')}</Th>
-                  <Th>{t('load')}</Th>
-                  <Th>{t('uptime')}</Th>
-                  <Th className="text-right">{t('actions')}</Th>
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((server, index) => (
-                  <tr key={server.id} className="border-b last:border-0">
-                    <Td>
-                      <div className="flex items-center gap-3">
-                        {server.region && (
-                          <span
-                            className={cn(
-                              'fi',
-                              `fi-${server.region.toLowerCase()}`,
-                            )}
-                          />
-                        )}
-                        <div>
-                          <div className="font-medium">
-                            {server.name || server.username}
+            <CardContent className="overflow-x-auto">
+              <table className="w-full min-w-[820px] text-sm">
+                <thead className="border-b text-muted-foreground">
+                  <tr>
+                    <Th>{t('node')}</Th>
+                    <Th>{t('status')}</Th>
+                    <Th>{t('region')}</Th>
+                    <Th>{t('type')}</Th>
+                    <Th>{t('load')}</Th>
+                    <Th>{t('uptime')}</Th>
+                    <Th className="text-right">{t('actions')}</Th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.map((server, index) => (
+                    <tr key={server.id} className="border-b last:border-0">
+                      <Td>
+                        <div className="flex items-center gap-3">
+                          {server.region && (
+                            <span
+                              className={cn(
+                                'fi',
+                                `fi-${server.region.toLowerCase()}`,
+                              )}
+                            />
+                          )}
+                          <div>
+                            <div className="font-medium">
+                              {server.name || server.username}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </Td>
-                    <Td>
-                      <div className="flex flex-wrap items-center gap-2">
-                        <StatusBadge online={server.online} />
-                        {server.disabled && (
-                          <Badge variant="secondary">{t('disabled')}</Badge>
-                        )}
-                      </div>
-                    </Td>
-                    <Td>
-                      <div>{server.location || '-'}</div>
-                    </Td>
-                    <Td>
-                      <div>{server.type || '-'}</div>
-                    </Td>
-                    <Td>
-                      <div>{server.load?.toFixed(2) ?? '-'}</div>
-                    </Td>
-                    <Td>{server.online ? formatUptime(server.uptime) : '-'}</Td>
-                    <Td>
-                      <div className="flex justify-end gap-2">
-                        <form action={moveServerAction}>
-                          <input type="hidden" name="id" value={server.id} />
-                          <input type="hidden" name="direction" value="up" />
+                      </Td>
+                      <Td>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <StatusBadge online={server.online} />
+                          {server.disabled && (
+                            <Badge variant="secondary">{t('disabled')}</Badge>
+                          )}
+                        </div>
+                      </Td>
+                      <Td>
+                        <div>{server.location || '-'}</div>
+                      </Td>
+                      <Td>
+                        <div>{server.type || '-'}</div>
+                      </Td>
+                      <Td>
+                        <div>{server.load?.toFixed(2) ?? '-'}</div>
+                      </Td>
+                      <Td>
+                        {server.online ? formatUptime(server.uptime) : '-'}
+                      </Td>
+                      <Td>
+                        <div className="flex justify-end gap-2">
+                          <CreatedNodeCopyButton
+                            username={server.username}
+                            copyLabel={t('copyInstallCommand')}
+                            copiedLabel={t('copied')}
+                            copyFailedLabel={t('copyFailed')}
+                          />
+                          <form action={moveServerAction}>
+                            <input type="hidden" name="id" value={server.id} />
+                            <input type="hidden" name="direction" value="up" />
+                            <Button
+                              type="submit"
+                              variant="outline"
+                              size="sm"
+                              disabled={index === 0}
+                              aria-label={t('moveUp')}
+                              title={t('moveUp')}
+                              className="px-2"
+                            >
+                              <ArrowUp className="size-4" />
+                            </Button>
+                          </form>
+                          <form action={moveServerAction}>
+                            <input type="hidden" name="id" value={server.id} />
+                            <input
+                              type="hidden"
+                              name="direction"
+                              value="down"
+                            />
+                            <Button
+                              type="submit"
+                              variant="outline"
+                              size="sm"
+                              disabled={index === rows.length - 1}
+                              aria-label={t('moveDown')}
+                              title={t('moveDown')}
+                              className="px-2"
+                            >
+                              <ArrowDown className="size-4" />
+                            </Button>
+                          </form>
                           <Button
-                            type="submit"
+                            asChild
                             variant="outline"
-                            size="sm"
-                            disabled={index === 0}
-                            aria-label={t('moveUp')}
-                            title={t('moveUp')}
-                            className="px-2"
-                          >
-                            <ArrowUp className="size-4" />
-                          </Button>
-                        </form>
-                        <form action={moveServerAction}>
-                          <input type="hidden" name="id" value={server.id} />
-                          <input type="hidden" name="direction" value="down" />
-                          <Button
-                            type="submit"
-                            variant="outline"
-                            size="sm"
-                            disabled={index === rows.length - 1}
-                            aria-label={t('moveDown')}
-                            title={t('moveDown')}
-                            className="px-2"
-                          >
-                            <ArrowDown className="size-4" />
-                          </Button>
-                        </form>
-                        <Button
-                          asChild
-                          variant="outline"
-                          size="sm"
-                          className="gap-2"
-                        >
-                          <Link
-                            href={`/admin?edit=${encodeURIComponent(server.username)}`}
-                          >
-                            <Pencil className="size-4" />
-                            {t('edit')}
-                          </Link>
-                        </Button>
-                        <form action={toggleServerAction}>
-                          <input
-                            type="hidden"
-                            name="username"
-                            value={server.username}
-                          />
-                          <input
-                            type="hidden"
-                            name="disabled"
-                            value={server.disabled ? 'false' : 'true'}
-                          />
-                          <Button type="submit" variant="outline" size="sm">
-                            {server.disabled ? t('enable') : t('disable')}
-                          </Button>
-                        </form>
-                        <form action={deleteServerAction}>
-                          <input
-                            type="hidden"
-                            name="username"
-                            value={server.username}
-                          />
-                          <ConfirmSubmitButton
-                            type="submit"
-                            variant="destructive"
                             size="sm"
                             className="gap-2"
-                            message={t('confirmDeleteNode', {
-                              name: server.name || server.username,
-                            })}
                           >
-                            <Trash2 className="size-4" />
-                            {t('delete')}
-                          </ConfirmSubmitButton>
-                        </form>
-                      </div>
-                    </Td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </CardContent>
-        </Card>
+                            <Link
+                              href={`/admin?edit=${encodeURIComponent(server.username)}`}
+                            >
+                              <Pencil className="size-4" />
+                              {t('edit')}
+                            </Link>
+                          </Button>
+                          <form action={toggleServerAction}>
+                            <input
+                              type="hidden"
+                              name="username"
+                              value={server.username}
+                            />
+                            <input
+                              type="hidden"
+                              name="disabled"
+                              value={server.disabled ? 'false' : 'true'}
+                            />
+                            <Button type="submit" variant="outline" size="sm">
+                              {server.disabled ? t('enable') : t('disable')}
+                            </Button>
+                          </form>
+                          <form action={deleteServerAction}>
+                            <input
+                              type="hidden"
+                              name="username"
+                              value={server.username}
+                            />
+                            <ConfirmSubmitButton
+                              type="submit"
+                              variant="destructive"
+                              size="sm"
+                              className="gap-2"
+                              message={t('confirmDeleteNode', {
+                                name: server.name || server.username,
+                              })}
+                            >
+                              <Trash2 className="size-4" />
+                              {t('delete')}
+                            </ConfirmSubmitButton>
+                          </form>
+                        </div>
+                      </Td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between gap-3">
-              <CardTitle className="text-base">{t('events')}</CardTitle>
-              {events && (
-                <form action={deleteAllEventsAction}>
-                  <ConfirmSubmitButton
-                    type="submit"
-                    variant="outline"
-                    size="sm"
-                    message={t('confirmClearEvents')}
-                  >
-                    {t('clear')}
-                  </ConfirmSubmitButton>
-                </form>
-              )}
-            </div>
-          </CardHeader>
-          <CardContent className="overflow-x-auto">
-            <table className="w-full min-w-[680px] text-sm">
-              <thead className="border-b text-muted-foreground">
-                <tr>
-                  <Th>{t('node')}</Th>
-                  <Th>{t('status')}</Th>
-                  <Th>{t('createdAt')}</Th>
-                  <Th>{t('resolvedAt')}</Th>
-                  <Th className="text-right">{t('actions')}</Th>
-                </tr>
-              </thead>
-              <tbody>
-                {eventList.map((event) => (
-                  <EventRow key={event.id} event={event} />
-                ))}
-                {events && !eventList.length && (
-                  <tr>
-                    <Td
-                      colSpan={5}
-                      className="text-center text-muted-foreground"
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between gap-3">
+                <CardTitle className="text-base">{t('events')}</CardTitle>
+                {events && (
+                  <form action={deleteAllEventsAction}>
+                    <ConfirmSubmitButton
+                      type="submit"
+                      variant="outline"
+                      size="sm"
+                      message={t('confirmClearEvents')}
                     >
-                      {t('noEvents')}
-                    </Td>
-                  </tr>
+                      {t('clear')}
+                    </ConfirmSubmitButton>
+                  </form>
                 )}
-                {!events && (
+              </div>
+            </CardHeader>
+            <CardContent className="overflow-x-auto">
+              <table className="w-full min-w-[680px] text-sm">
+                <thead className="border-b text-muted-foreground">
                   <tr>
-                    <Td
-                      colSpan={5}
-                      className="text-center text-muted-foreground"
-                    >
-                      {t('eventsUnavailable')}
-                    </Td>
+                    <Th>{t('node')}</Th>
+                    <Th>{t('status')}</Th>
+                    <Th>{t('createdAt')}</Th>
+                    <Th>{t('resolvedAt')}</Th>
+                    <Th className="text-right">{t('actions')}</Th>
                   </tr>
-                )}
-              </tbody>
-            </table>
-          </CardContent>
-        </Card>
-      </main>
+                </thead>
+                <tbody>
+                  {eventList.map((event) => (
+                    <EventRow key={event.id} event={event} />
+                  ))}
+                  {events && !eventList.length && (
+                    <tr>
+                      <Td
+                        colSpan={5}
+                        className="text-center text-muted-foreground"
+                      >
+                        {t('noEvents')}
+                      </Td>
+                    </tr>
+                  )}
+                  {!events && (
+                    <tr>
+                      <Td
+                        colSpan={5}
+                        className="text-center text-muted-foreground"
+                      >
+                        {t('eventsUnavailable')}
+                      </Td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </CardContent>
+          </Card>
+        </main>
+      </CreatedNodeCommandProvider>
     );
   } catch (error) {
     return (
