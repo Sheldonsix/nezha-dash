@@ -1,12 +1,10 @@
 "use client"
 
+import { PencilSquareIcon } from "@heroicons/react/20/solid"
 import Link from "next/link"
 import { Button } from "./ui/button"
-import { PencilSquareIcon } from "@heroicons/react/20/solid"
 
 export function AdminButton() {
-
-
   return (
     <Link href="/admin" prefetch={true}>
       <Button

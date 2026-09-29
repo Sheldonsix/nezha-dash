@@ -12,8 +12,7 @@ import { Separator } from "./ui/separator"
 
 export default function ServerCardInline({ serverInfo }: { serverInfo: NezhaAPISafe }) {
   const t = useTranslations("ServerCard")
-  const { id, name, country_code, online, cpu, mem, stg, host } =
-    formatNezhaInfo(serverInfo)
+  const { id, name, country_code, online, cpu, mem, stg, host } = formatNezhaInfo(serverInfo)
 
   const showFlag = getEnv("NEXT_PUBLIC_ShowFlag") === "true"
 

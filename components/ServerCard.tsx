@@ -11,8 +11,7 @@ import { cn, formatBytes, formatNezhaInfo } from "@/lib/utils"
 
 export default function ServerCard({ serverInfo }: { serverInfo: NezhaAPISafe }) {
   const t = useTranslations("ServerCard")
-  const { id, name, country_code, online, cpu, mem, stg, host } =
-    formatNezhaInfo(serverInfo)
+  const { id, name, country_code, online, cpu, mem, stg, host } = formatNezhaInfo(serverInfo)
 
   const showFlag = getEnv("NEXT_PUBLIC_ShowFlag") === "true"
   const showNetTransfer = getEnv("NEXT_PUBLIC_ShowNetTransfer") === "true"

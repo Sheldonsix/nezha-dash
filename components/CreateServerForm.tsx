@@ -1,12 +1,9 @@
-'use client';
+"use client"
 
-import { Plus } from 'lucide-react';
-import { type ReactNode, useActionState, useEffect, useState } from 'react';
-import { Button } from './ui/button';
-import {
-  CreatedNodeCommand,
-  useCreatedNodeCommand,
-} from './CreatedNodeCommand';
+import { Plus } from "lucide-react"
+import { type ReactNode, useActionState, useEffect } from "react"
+import { type CreatedNodeCommand, useCreatedNodeCommand } from "./CreatedNodeCommand"
+import { Button } from "./ui/button"
 
 export function CreateServerForm({
   createAction,
@@ -16,20 +13,20 @@ export function CreateServerForm({
   createAction: (
     previousState: CreatedNodeCommand,
     formData: FormData,
-  ) => Promise<CreatedNodeCommand>;
-  children?: ReactNode;
-  createLabel: string;
+  ) => Promise<CreatedNodeCommand>
+  children?: ReactNode
+  createLabel: string
 }) {
-  const { setCreatedNode } = useCreatedNodeCommand();
+  const { setCreatedNode } = useCreatedNodeCommand()
   const [state, formAction, pending] = useActionState(createAction, {
-    command: '',
-    username: '',
-  });
+    command: "",
+    username: "",
+  })
   useEffect(() => {
     if (state.username && state.command) {
-      setCreatedNode(state);
+      setCreatedNode(state)
     }
-  }, [state, setCreatedNode]);
+  }, [state, setCreatedNode])
   return (
     <form action={formAction} className="grid gap-3 md:grid-cols-3">
       {children}
@@ -40,5 +37,5 @@ export function CreateServerForm({
         </Button>
       </div>
     </form>
-  );
+  )
 }

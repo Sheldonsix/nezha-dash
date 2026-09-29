@@ -1,109 +1,106 @@
-'use client';
+"use client"
 
-import countries from 'i18n-iso-countries';
-import enLocale from 'i18n-iso-countries/langs/en.json';
-import zhLocale from 'i18n-iso-countries/langs/zh.json';
-import { useEffect, useRef, useState } from 'react';
-import { cn } from '@/lib/utils';
+import countries from "i18n-iso-countries"
+import enLocale from "i18n-iso-countries/langs/en.json"
+import zhLocale from "i18n-iso-countries/langs/zh.json"
+import { useEffect, useRef, useState } from "react"
+import { cn } from "@/lib/utils"
 
-countries.registerLocale(zhLocale);
-countries.registerLocale(enLocale);
+countries.registerLocale(zhLocale)
+countries.registerLocale(enLocale)
 
 interface RegionOption {
-  code: string;
-  nameZh: string;
-  nameEn: string;
+  code: string
+  nameZh: string
+  nameEn: string
 }
 
 export function RegionAutoComplete({
-  defaultValue = '',
-  name = 'region',
-  placeholder = '',
+  defaultValue = "",
+  name = "region",
+  placeholder = "",
   required = false,
 }: {
-  defaultValue?: string;
-  name?: string;
-  placeholder?: string;
-  required?: boolean;
+  defaultValue?: string
+  name?: string
+  placeholder?: string
+  required?: boolean
 }) {
-  const [query, setQuery] = useState(defaultValue);
-  const [isOpen, setIsOpen] = useState(false);
-  const [results, setResult] = useState<RegionOption[]>([]);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [query, setQuery] = useState(defaultValue)
+  const [isOpen, setIsOpen] = useState(false)
+  const [results, setResult] = useState<RegionOption[]>([])
+  const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(e.target as Node)
-      ) {
-        setIsOpen(false);
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setIsOpen(false)
       }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
 
   useEffect(() => {
-    const form = containerRef.current?.closest('form');
+    const form = containerRef.current?.closest("form")
     const handleReset = () => {
-      setQuery(defaultValue);
-      setResult([]);
-      setIsOpen(false);
-    };
-    form?.addEventListener('reset', handleReset);
-    return () => form?.removeEventListener('reset', handleReset);
-  }, [defaultValue]);
+      setQuery(defaultValue)
+      setResult([])
+      setIsOpen(false)
+    }
+    form?.addEventListener("reset", handleReset)
+    return () => form?.removeEventListener("reset", handleReset)
+  }, [defaultValue])
 
   const handleSearch = (value: string) => {
-    setQuery(value);
-    const trimmed = value.trim();
+    setQuery(value)
+    const trimmed = value.trim()
     if (!trimmed) {
-      setResult([]);
-      setIsOpen(false);
-      return;
+      setResult([])
+      setIsOpen(false)
+      return
     }
 
-    const matchedCodes = new Set<string>();
+    const matchedCodes = new Set<string>()
 
-    const codeFromZh = countries.getAlpha2Code(trimmed, 'zh');
-    if (codeFromZh) matchedCodes.add(codeFromZh);
+    const codeFromZh = countries.getAlpha2Code(trimmed, "zh")
+    if (codeFromZh) matchedCodes.add(codeFromZh)
 
-    const codeFromEn = countries.getAlpha2Code(trimmed, 'en');
-    if (codeFromEn) matchedCodes.add(codeFromEn);
+    const codeFromEn = countries.getAlpha2Code(trimmed, "en")
+    if (codeFromEn) matchedCodes.add(codeFromEn)
 
-    const allCodes = Object.keys(countries.getAlpha2Codes());
-    const upperInput = trimmed.toUpperCase();
+    const allCodes = Object.keys(countries.getAlpha2Codes())
+    const upperInput = trimmed.toUpperCase()
 
-    const codeMatches = allCodes.filter((code) => code.startsWith(upperInput));
+    const codeMatches = allCodes.filter((code) => code.startsWith(upperInput))
     codeMatches.slice(0, 8).forEach((code) => {
-      matchedCodes.add(code);
-    });
+      matchedCodes.add(code)
+    })
 
     if (matchedCodes.size < 8) {
       for (const code of allCodes) {
-        const nameZh = countries.getName(code, 'zh') || '';
+        const nameZh = countries.getName(code, "zh") || ""
         if (nameZh.includes(trimmed)) {
-          matchedCodes.add(code);
-          if (matchedCodes.size >= 8) break;
+          matchedCodes.add(code)
+          if (matchedCodes.size >= 8) break
         }
       }
     }
 
     const formatted: RegionOption[] = Array.from(matchedCodes).map((code) => ({
       code,
-      nameEn: countries.getName(code, 'en') || code,
-      nameZh: countries.getName(code, 'zh') || code,
-    }));
+      nameEn: countries.getName(code, "en") || code,
+      nameZh: countries.getName(code, "zh") || code,
+    }))
 
-    setResult(formatted);
-    setIsOpen(formatted.length > 0);
-  };
+    setResult(formatted)
+    setIsOpen(formatted.length > 0)
+  }
 
   const handleSelect = (code: string) => {
-    setQuery(code);
-    setIsOpen(false);
-  };
+    setQuery(code)
+    setIsOpen(false)
+  }
 
   return (
     <div ref={containerRef} className="relative w-full">
@@ -113,7 +110,7 @@ export function RegionAutoComplete({
           value={query}
           onChange={(e) => handleSearch(e.target.value)}
           onFocus={() => {
-            if (query.trim() && results.length > 0) setIsOpen(true);
+            if (query.trim() && results.length > 0) setIsOpen(true)
           }}
           placeholder={placeholder}
           required={required}
@@ -130,13 +127,9 @@ export function RegionAutoComplete({
               className="flex cursor-pointer items-center justify-between rounded-sm px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground"
             >
               <div className="flex items-center gap-2">
-                <span
-                  className={cn('fi', `fi-${item.code.toLowerCase()}`)}
-                ></span>
+                <span className={cn("fi", `fi-${item.code.toLowerCase()}`)}></span>
                 <span className="font-medium">{item.nameZh}</span>
-                <span className="text-muted-foreground text-xs">
-                  ({item.nameEn})
-                </span>
+                <span className="text-muted-foreground text-xs">({item.nameEn})</span>
                 <span className="font-mono font-semibold text-muted-foreground text-xs">
                   {item.code}
                 </span>
@@ -146,5 +139,5 @@ export function RegionAutoComplete({
         </ul>
       )}
     </div>
-  );
+  )
 }

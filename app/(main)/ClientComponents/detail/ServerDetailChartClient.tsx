@@ -34,10 +34,7 @@ const tooltipLabels: Record<string, string> = {
   udp: "UDP",
 }
 
-function formatChartTooltipTime(
-  _: unknown,
-  payload: Array<{ payload?: { timeStamp?: string } }>,
-) {
+function formatChartTooltipTime(_: unknown, payload: Array<{ payload?: { timeStamp?: string } }>) {
   const timeStamp = payload[0]?.payload?.timeStamp
   return timeStamp ? new Date(Number(timeStamp)).toLocaleString() : ""
 }
