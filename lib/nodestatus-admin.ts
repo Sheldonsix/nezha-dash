@@ -5,6 +5,17 @@ export type NodeStatusResp<T = unknown> = {
   code: 0 | 1
   data: T
   msg: string
+  error_code?: string
+}
+
+export class NodeStatusAdminError extends Error {
+  constructor(
+    message: string,
+    readonly code?: string,
+  ) {
+    super(message)
+    this.name = "NodeStatusAdminError"
+  }
 }
 
 export type NodeStatusAdminServer = {
@@ -104,7 +115,10 @@ async function adminFetch<T>(path: string, init?: RequestInit, retry = true): Pr
 
   const data = (await res.json()) as NodeStatusResp<T>
   if (!res.ok || data.code !== 0)
-    throw new Error(data.msg || `NodeStatus API failed: ${res.status}`)
+    throw new NodeStatusAdminError(
+      data.msg || `NodeStatus API failed: ${res.status}`,
+      data.error_code,
+    )
   return data.data
 }
 

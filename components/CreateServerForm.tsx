@@ -5,15 +5,16 @@ import { type ReactNode, useActionState, useEffect } from "react"
 import { type CreatedNodeCommand, useCreatedNodeCommand } from "./CreatedNodeCommand"
 import { Button } from "./ui/button"
 
+type CreateServerState = CreatedNodeCommand & {
+  error: string
+}
+
 export function CreateServerForm({
   createAction,
   createLabel,
   children,
 }: {
-  createAction: (
-    previousState: CreatedNodeCommand,
-    formData: FormData,
-  ) => Promise<CreatedNodeCommand>
+  createAction: (previousState: CreateServerState, formData: FormData) => Promise<CreateServerState>
   children?: ReactNode
   createLabel: string
 }) {
@@ -21,6 +22,7 @@ export function CreateServerForm({
   const [state, formAction, pending] = useActionState(createAction, {
     command: "",
     username: "",
+    error: "",
   })
   useEffect(() => {
     if (state.username && state.command) {
@@ -30,6 +32,11 @@ export function CreateServerForm({
   return (
     <form action={formAction} className="grid gap-3 md:grid-cols-3">
       {children}
+      {state.error && (
+        <p role="alert" className="col-span-full text-destructive text-sm">
+          {state.error}
+        </p>
+      )}
       <div className="col-span-full flex justify-end">
         <Button type="submit" disabled={pending} className="gap-2">
           <Plus className="size-4" />

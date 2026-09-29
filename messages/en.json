@@ -84,6 +84,7 @@
     "unresolved": "Unresolved",
     "unknown": "Unknown",
     "username": "Username",
+    "usernameExists": "Username already exists",
     "password": "Password",
     "passwordKeep": "Password (leave blank to keep)",
     "name": "Name",

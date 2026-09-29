@@ -84,6 +84,7 @@
     "unresolved": "未復旧",
     "unknown": "不明",
     "username": "ユーザー名",
+    "usernameExists": "ユーザー名は既に存在します",
     "password": "パスワード",
     "passwordKeep": "パスワード（空欄なら変更しません）",
     "name": "名前",

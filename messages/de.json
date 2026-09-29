@@ -84,6 +84,7 @@
     "unresolved": "Nicht behoben",
     "unknown": "Unbekannt",
     "username": "Benutzername",
+    "usernameExists": "Benutzername existiert bereits",
     "password": "Passwort",
     "passwordKeep": "Passwort (leer lassen, um es beizubehalten)",
     "name": "Name",

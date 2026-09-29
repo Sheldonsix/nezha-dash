@@ -37,6 +37,7 @@ import {
   getNodeStatusSnapshot,
   listNodeStatusAdminEvents,
   listNodeStatusAdminServers,
+  NodeStatusAdminError,
   type NodeStatusAdminEvent,
   type NodeStatusAdminServer,
   updateNodeStatusAdminServer,
@@ -137,38 +138,53 @@ function normalizeRegion(value: string) {
 }
 
 async function createServerAction(
-  _previousState: { command: string; username: string },
+  _previousState: { command: string; username: string; error: string },
   formData: FormData,
 ) {
   "use server"
 
   await requireAdmin()
-  const username = text(formData, "username")
-  const password = text(formData, "password")
-  const name = text(formData, "name")
-  const type = text(formData, "type")
-  const location = text(formData, "location")
-  const regionInput = text(formData, "region")
-  if (!username || !password || !name || !type || !location || !regionInput) {
-    throw new Error("server fields are required")
+  const t = await getTranslations("AdminPage")
+
+  try {
+    const username = text(formData, "username")
+    const password = text(formData, "password")
+    const name = text(formData, "name")
+    const type = text(formData, "type")
+    const location = text(formData, "location")
+    const regionInput = text(formData, "region")
+    if (!username || !password || !name || !type || !location || !regionInput) {
+      throw new Error("server fields are required")
+    }
+    const region = normalizeRegion(regionInput)
+    if (!region) throw new Error("region must be an ISO alpha-2 code or country name")
+
+    const command = createInstallCommand(username, password)
+
+    await createNodeStatusAdminServer({
+      username,
+      password,
+      name,
+      type,
+      location,
+      region,
+      disabled: formData.get("disabled") === "on",
+    })
+    revalidatePath("/admin")
+
+    return { command, username, error: "" }
+  } catch (error) {
+    return {
+      command: "",
+      username: "",
+      error:
+        error instanceof NodeStatusAdminError && error.code === "server_username_exists"
+          ? t("usernameExists")
+          : error instanceof Error
+            ? error.message
+            : t("requestFailed"),
+    }
   }
-  const region = normalizeRegion(regionInput)
-  if (!region) throw new Error("region must be an ISO alpha-2 code or country name")
-
-  const command = createInstallCommand(username, password)
-
-  await createNodeStatusAdminServer({
-    username,
-    password,
-    name,
-    type,
-    location,
-    region,
-    disabled: formData.get("disabled") === "on",
-  })
-  revalidatePath("/admin")
-
-  return { command, username }
 }
 
 async function updateServerAction(formData: FormData) {
@@ -253,7 +269,6 @@ async function moveServerAction(formData: FormData) {
   const target = direction === "up" ? index - 1 : index + 1
 
   if (index < 0 || target < 0 || target >= order.length) return
-
   ;[order[index], order[target]] = [order[target], order[index]]
   await updateOrderNodeStatusAdminServer(order)
   revalidatePath("/admin")

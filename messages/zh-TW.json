@@ -84,6 +84,7 @@
     "unresolved": "未恢復",
     "unknown": "未知",
     "username": "使用者名稱",
+    "usernameExists": "使用者名稱已存在",
     "password": "密碼",
     "passwordKeep": "密碼（留空則不修改）",
     "name": "名稱",
