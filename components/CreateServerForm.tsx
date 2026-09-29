@@ -1,6 +1,6 @@
 "use client"
 
-import { Plus } from "lucide-react"
+import { LoaderCircle, Plus } from "lucide-react"
 import { type ReactNode, useActionState, useEffect } from "react"
 import { type CreatedNodeCommand, useCreatedNodeCommand } from "./CreatedNodeCommand"
 import { Button } from "./ui/button"
@@ -12,11 +12,13 @@ type CreateServerState = CreatedNodeCommand & {
 export function CreateServerForm({
   createAction,
   createLabel,
+  creatingLabel,
   children,
 }: {
   createAction: (previousState: CreateServerState, formData: FormData) => Promise<CreateServerState>
   children?: ReactNode
   createLabel: string
+  creatingLabel: string
 }) {
   const { setCreatedNode } = useCreatedNodeCommand()
   const [state, formAction, pending] = useActionState(createAction, {
@@ -39,8 +41,12 @@ export function CreateServerForm({
       )}
       <div className="col-span-full flex justify-end">
         <Button type="submit" disabled={pending} className="gap-2">
-          <Plus className="size-4" />
-          {createLabel}
+          {pending ? (
+            <LoaderCircle aria-hidden className="size-4 animate-spin" />
+          ) : (
+            <Plus className="size-4" />
+          )}
+          <span aria-live="polite">{pending ? creatingLabel : createLabel}</span>
         </Button>
       </div>
     </form>

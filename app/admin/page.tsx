@@ -24,6 +24,7 @@ import { ConfirmSubmitButton } from "@/components/ConfirmSubmitButton"
 import { CreatedNodeCommandProvider, CreatedNodeCopyButton } from "@/components/CreatedNodeCommand"
 import { CreateServerForm } from "@/components/CreateServerForm"
 import { BackIcon } from "@/components/Icon"
+import { SubmitButton } from "@/components/SubmitButton"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -374,7 +375,11 @@ export default async function AdminPage({
                 {t("addNode")}
               </summary>
               <CardContent>
-                <CreateServerForm createAction={createServerAction} createLabel={t("create")}>
+                <CreateServerForm
+                  createAction={createServerAction}
+                  createLabel={t("create")}
+                  creatingLabel={t("creating")}
+                >
                   <ServerFields showUsername passwordRequired />
                 </CreateServerForm>
               </CardContent>
@@ -398,7 +403,7 @@ export default async function AdminPage({
                     <Button asChild variant="outline">
                       <Link href="/admin">{t("cancel")}</Link>
                     </Button>
-                    <Button type="submit">{t("save")}</Button>
+                    <SubmitButton type="submit">{t("save")}</SubmitButton>
                   </div>
                 </form>
               </CardContent>
@@ -462,7 +467,7 @@ export default async function AdminPage({
                           <form action={moveServerAction}>
                             <input type="hidden" name="id" value={server.id} />
                             <input type="hidden" name="direction" value="up" />
-                            <Button
+                            <SubmitButton
                               type="submit"
                               variant="outline"
                               size="sm"
@@ -472,12 +477,12 @@ export default async function AdminPage({
                               className="px-2"
                             >
                               <ArrowUp className="size-4" />
-                            </Button>
+                            </SubmitButton>
                           </form>
                           <form action={moveServerAction}>
                             <input type="hidden" name="id" value={server.id} />
                             <input type="hidden" name="direction" value="down" />
-                            <Button
+                            <SubmitButton
                               type="submit"
                               variant="outline"
                               size="sm"
@@ -487,7 +492,7 @@ export default async function AdminPage({
                               className="px-2"
                             >
                               <ArrowDown className="size-4" />
-                            </Button>
+                            </SubmitButton>
                           </form>
                           <Button asChild variant="outline" size="sm" className="gap-2">
                             <Link href={`/admin?edit=${encodeURIComponent(server.username)}`}>
@@ -502,9 +507,9 @@ export default async function AdminPage({
                               name="disabled"
                               value={server.disabled ? "false" : "true"}
                             />
-                            <Button type="submit" variant="outline" size="sm">
+                            <SubmitButton type="submit" variant="outline" size="sm">
                               {server.disabled ? t("enable") : t("disable")}
-                            </Button>
+                            </SubmitButton>
                           </form>
                           <form action={deleteServerAction}>
                             <input type="hidden" name="username" value={server.username} />
@@ -622,9 +627,9 @@ function AdminLogin({ error }: { error: boolean }) {
         {error && (
           <p className="col-start-2 font-semibold text-red-500 text-sm">{t("ErrorMessage")}</p>
         )}
-        <Button type="submit" className="col-start-2 w-1/2 justify-self-end">
+        <SubmitButton type="submit" className="col-start-2 w-1/2 justify-self-end">
           {t("Submit")}
-        </Button>
+        </SubmitButton>
       </section>
     </form>
   )

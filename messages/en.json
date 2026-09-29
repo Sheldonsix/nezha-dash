@@ -50,6 +50,7 @@
     "unresolvedEvents": "Unresolved incidents",
     "addNode": "Add node",
     "create": "Create",
+    "creating": "Creating...",
     "editNode": "Edit node: {name}",
     "cancel": "Cancel",
     "save": "Save",

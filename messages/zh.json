@@ -50,6 +50,7 @@
     "unresolvedEvents": "未恢复故障",
     "addNode": "新增节点",
     "create": "创建",
+    "creating": "创建中...",
     "editNode": "编辑节点：{name}",
     "cancel": "取消",
     "save": "保存",

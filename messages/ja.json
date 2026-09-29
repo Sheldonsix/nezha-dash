@@ -50,6 +50,7 @@
     "unresolvedEvents": "未復旧の障害",
     "addNode": "ノードを追加",
     "create": "作成",
+    "creating": "作成中...",
     "editNode": "ノード編集：{name}",
     "cancel": "キャンセル",
     "save": "保存",

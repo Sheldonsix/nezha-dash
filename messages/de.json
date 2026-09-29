@@ -50,6 +50,7 @@
     "unresolvedEvents": "Ungelöste Vorfälle",
     "addNode": "Knoten hinzufügen",
     "create": "Erstellen",
+    "creating": "Wird erstellt...",
     "editNode": "Knoten bearbeiten: {name}",
     "cancel": "Abbrechen",
     "save": "Speichern",
