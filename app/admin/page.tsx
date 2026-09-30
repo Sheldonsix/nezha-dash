@@ -348,22 +348,22 @@ export default async function AdminPage({
 
           <section className="grid grid-cols-2 gap-4 lg:grid-cols-4">
             <StatCard
-              icon={<Server className="size-4" />}
+              icon={<Server className="size-4 text-blue-500" />}
               label={t("totalNodes")}
               value={rows.length}
             />
             <StatCard
-              icon={<Wifi className="size-4" />}
+              icon={<Wifi className="size-4 text-green-500" />}
               label={t("online")}
               value={onlineCount ?? "-"}
             />
             <StatCard
-              icon={<WifiOff className="size-4" />}
+              icon={<WifiOff className="size-4 text-red-500" />}
               label={t("offline")}
               value={onlineCount === null ? "-" : rows.length - onlineCount}
             />
             <StatCard
-              icon={<AlertTriangle className="size-4" />}
+              icon={<AlertTriangle className="size-4 text-orange-400" />}
               label={t("unresolvedEvents")}
               value={unresolvedCount ?? "-"}
             />
