@@ -324,7 +324,7 @@ export default async function AdminPage({
     return (
       <CreatedNodeCommandProvider>
         <main className="mx-auto grid w-full max-w-5xl gap-4 bg-background p-4 md:gap-6 md:p-10 md:pt-8">
-          <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex flex-col gap-3">
               <h1 className="font-semibold text-xl">{t("title")}</h1>
               <Link href={"/"}>
@@ -334,16 +334,18 @@ export default async function AdminPage({
                 </div>
               </Link>
             </div>
-            {getEnv("NEXT_PUBLIC_NodeStatus") !== "true" && (
-              <Badge variant="outline" className="w-fit">
-                {t("nodeStatusNotEnabled")}
-              </Badge>
-            )}
-            {!snapshot && (
-              <Badge variant="secondary" className="w-fit">
-                {t("snapshotUnavailable")}
-              </Badge>
-            )}
+            <div className="flex flex-wrap gap-2 sm:justify-end">
+              {getEnv("NEXT_PUBLIC_NodeStatus") !== "true" && (
+                <Badge variant="outline" className="w-fit">
+                  {t("nodeStatusNotEnabled")}
+                </Badge>
+              )}
+              {!snapshot && (
+                <Badge variant="secondary" className="w-fit">
+                  {t("snapshotUnavailable")}
+                </Badge>
+              )}
+            </div>
           </header>
 
           <section className="grid grid-cols-2 gap-4 lg:grid-cols-4">
@@ -396,14 +398,16 @@ export default async function AdminPage({
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <form action={updateServerAction} className="grid gap-3 md:grid-cols-3">
+                <form action={updateServerAction} className="grid grid-cols-1 gap-3 md:grid-cols-3">
                   <input type="hidden" name="username" value={editingServer.username} />
                   <ServerFields server={editingServer} />
-                  <div className="col-span-full flex justify-end gap-2">
-                    <Button asChild variant="outline">
+                  <div className="col-span-full flex flex-col gap-2 sm:flex-row sm:justify-end">
+                    <Button className="w-full sm:w-auto" asChild variant="outline">
                       <Link href="/admin">{t("cancel")}</Link>
                     </Button>
-                    <SubmitButton type="submit">{t("save")}</SubmitButton>
+                    <SubmitButton className="w-full sm:w-auto" type="submit">
+                      {t("save")}
+                    </SubmitButton>
                   </div>
                 </form>
               </CardContent>
@@ -414,9 +418,9 @@ export default async function AdminPage({
             <CardHeader>
               <CardTitle className="text-base">{t("nodeManagement")}</CardTitle>
             </CardHeader>
-            <CardContent className="overflow-x-auto">
-              <table className="w-full min-w-[820px] text-sm">
-                <thead className="border-b text-muted-foreground">
+            <CardContent className="px-4 pb-4 sm:px-6 sm:pb-6 md:overflow-x-auto">
+              <table className="block w-full text-sm md:table md:min-w-205">
+                <thead className="hidden border-b text-muted-foreground md:table-header-group">
                   <tr>
                     <Th>{t("node")}</Th>
                     <Th>{t("status")}</Th>
@@ -427,37 +431,63 @@ export default async function AdminPage({
                     <Th className="text-right">{t("actions")}</Th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="grid gap-3 md:table-row-group">
                   {rows.map((server, index) => (
-                    <tr key={server.id} className="border-b last:border-0">
-                      <Td>
-                        <div className="flex items-center gap-3">
+                    <tr
+                      key={server.id}
+                      className="grid grid-cols-2 gap-x-4 gap-y-3 rounded-lg border p-4 md:table-row md:rounded-none md:border-0 md:border-b md:p-0 md:last:border-0"
+                    >
+                      <Td className="col-span-2 block p-0 md:table-cell md:px-3 md:py-3">
+                        <span className="mb-1 block text-muted-foreground text-xs md:hidden">
+                          {t("node")}
+                        </span>
+                        <div className="flex min-w-0 items-center gap-3">
                           {server.region && (
                             <span className={cn("fi", `fi-${server.region.toLowerCase()}`)} />
                           )}
-                          <div>
-                            <div className="font-medium">{server.name || server.username}</div>
+                          <div className="min-w-0 break-all font-medium">
+                            {server.name || server.username}
                           </div>
                         </div>
                       </Td>
-                      <Td>
+                      <Td className="block p-0 md:table-cell md:px-3 md:py-3">
+                        <span className="mb-1 block text-muted-foreground text-xs md:hidden">
+                          {t("status")}
+                        </span>
                         <div className="flex flex-wrap items-center gap-2">
                           <StatusBadge online={server.online} />
                           {server.disabled && <Badge variant="secondary">{t("disabled")}</Badge>}
                         </div>
                       </Td>
-                      <Td>
-                        <div>{server.location || "-"}</div>
+                      <Td className="block p-0 md:table-cell md:px-3 md:py-3">
+                        <span className="mb-1 block text-muted-foreground text-xs md:hidden">
+                          {t("region")}
+                        </span>
+                        {server.location || "-"}
                       </Td>
-                      <Td>
-                        <div>{server.type || "-"}</div>
+                      <Td className="block p-0 md:table-cell md:px-3 md:py-3">
+                        <span className="mb-1 block text-muted-foreground text-xs md:hidden">
+                          {t("type")}
+                        </span>
+                        {server.type || "-"}
                       </Td>
-                      <Td>
-                        <div>{server.load?.toFixed(2) ?? "-"}</div>
+                      <Td className="block p-0 md:table-cell md:px-3 md:py-3">
+                        <span className="mb-1 block text-muted-foreground text-xs md:hidden">
+                          {t("load")}
+                        </span>
+                        {server.load?.toFixed(2) ?? "-"}
                       </Td>
-                      <Td>{server.online ? formatUptime(server.uptime) : "-"}</Td>
-                      <Td>
-                        <div className="flex justify-end gap-2">
+                      <Td className="block p-0 md:table-cell md:px-3 md:py-3">
+                        <span className="mb-1 block text-muted-foreground text-xs md:hidden">
+                          {t("uptime")}
+                        </span>
+                        {server.online ? formatUptime(server.uptime) : "-"}
+                      </Td>
+                      <Td className="col-span-2 block p-0 md:table-cell md:px-3 md:py-3">
+                        <span className="mb-1 block text-muted-foreground text-xs md:hidden">
+                          {t("actions")}
+                        </span>
+                        <div className="flex flex-wrap gap-2 md:justify-end">
                           <CreatedNodeCopyButton
                             username={server.username}
                             copyLabel={t("copyInstallCommand")}
@@ -474,7 +504,7 @@ export default async function AdminPage({
                               disabled={index === 0}
                               aria-label={t("moveUp")}
                               title={t("moveUp")}
-                              className="px-2"
+                              className="size-11 p-0 md:size-9"
                             >
                               <ArrowUp className="size-4" />
                             </SubmitButton>
@@ -489,12 +519,12 @@ export default async function AdminPage({
                               disabled={index === rows.length - 1}
                               aria-label={t("moveDown")}
                               title={t("moveDown")}
-                              className="px-2"
+                              className="size-11 p-0 md:size-9"
                             >
                               <ArrowDown className="size-4" />
                             </SubmitButton>
                           </form>
-                          <Button asChild variant="outline" size="sm" className="gap-2">
+                          <Button asChild variant="outline" size="sm" className="h-11 gap-2 md:h-9">
                             <Link href={`/admin?edit=${encodeURIComponent(server.username)}`}>
                               <Pencil className="size-4" />
                               {t("edit")}
@@ -507,7 +537,12 @@ export default async function AdminPage({
                               name="disabled"
                               value={server.disabled ? "false" : "true"}
                             />
-                            <SubmitButton type="submit" variant="outline" size="sm">
+                            <SubmitButton
+                              type="submit"
+                              variant="outline"
+                              size="sm"
+                              className="h-11 gap-2 md:h-9"
+                            >
                               {server.disabled ? t("enable") : t("disable")}
                             </SubmitButton>
                           </form>
@@ -517,7 +552,7 @@ export default async function AdminPage({
                               type="submit"
                               variant="destructive"
                               size="sm"
-                              className="gap-2"
+                              className="h-11 gap-2 md:h-9"
                               message={t("confirmDeleteNode", {
                                 name: server.name || server.username,
                               })}
@@ -545,6 +580,7 @@ export default async function AdminPage({
                       type="submit"
                       variant="outline"
                       size="sm"
+                      className="h-11 md:h-9"
                       message={t("confirmClearEvents")}
                     >
                       {t("clear")}
@@ -553,9 +589,9 @@ export default async function AdminPage({
                 )}
               </div>
             </CardHeader>
-            <CardContent className="overflow-x-auto">
-              <table className="w-full min-w-[680px] text-sm">
-                <thead className="border-b text-muted-foreground">
+            <CardContent className="px-4 pb-4 sm:px-6 sm:pb-6 md:overflow-x-auto">
+              <table className="block text-sm md:table md:min-w-[680px]">
+                <thead className="hidden border-b text-muted-foreground md:table-header-group">
                   <tr>
                     <Th>{t("node")}</Th>
                     <Th>{t("status")}</Th>
@@ -564,20 +600,26 @@ export default async function AdminPage({
                     <Th className="text-right">{t("actions")}</Th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="grid gap-3 md:table-row-group">
                   {eventList.map((event) => (
                     <EventRow key={event.id} event={event} />
                   ))}
                   {events && !eventList.length && (
-                    <tr>
-                      <Td colSpan={5} className="text-center text-muted-foreground">
+                    <tr className="block md:table-row">
+                      <Td
+                        colSpan={5}
+                        className="block text-center text-muted-foreground md:table-cell"
+                      >
                         {t("noEvents")}
                       </Td>
                     </tr>
                   )}
                   {!events && (
-                    <tr>
-                      <Td colSpan={5} className="text-center text-muted-foreground">
+                    <tr className="block md:table-row">
+                      <Td
+                        colSpan={5}
+                        className="block text-center text-muted-foreground md:table-cell"
+                      >
                         {t("eventsUnavailable")}
                       </Td>
                     </tr>
@@ -599,9 +641,9 @@ function AdminLogin({ error }: { error: boolean }) {
   return (
     <form
       action={loginAdminAction}
-      className="flex flex-1 flex-col items-center justify-center gap-4 p-4"
+      className="flex min-h-screen flex-col items-center justify-center gap-4 p-4"
     >
-      <section className="grid w-full max-w-sm grid-cols-[max-content_minmax(0,1fr)] items-center gap-x-3 gap-y-2">
+      <section className="grid w-full max-w-sm grid-cols-1 gap-2 sm:grid-cols-[max-content_minmax(0,1fr)] sm:gap-x-3">
         <label htmlFor="admin-username" className="font-semibold text-base">
           {t("UsernameSignInMessage")}
         </label>
@@ -625,9 +667,9 @@ function AdminLogin({ error }: { error: boolean }) {
           autoComplete="current-password"
         />
         {error && (
-          <p className="col-start-2 font-semibold text-red-500 text-sm">{t("ErrorMessage")}</p>
+          <p className="font-semibold text-red-500 text-sm sm:col-start-2">{t("ErrorMessage")}</p>
         )}
-        <SubmitButton type="submit" className="col-start-2 w-1/2 justify-self-end">
+        <SubmitButton type="submit" className="w-full sm:col-start-2 sm:w-1/2 sm:justify-self-end">
           {t("Submit")}
         </SubmitButton>
       </section>
@@ -692,10 +734,10 @@ function StatCard({
 }) {
   return (
     <Card>
-      <CardContent className="flex items-center gap-3 p-4">
-        <div className="rounded-md bg-secondary p-2">{icon}</div>
-        <div>
-          <div className="text-muted-foreground text-sm">{label}</div>
+      <CardContent className="flex min-w-0 items-center gap-3 p-3 sm:p-4">
+        <div className="shrink-0 rounded-md bg-secondary p-2">{icon}</div>
+        <div className="min-w-0">
+          <div className="break-words text-muted-foreground text-sm">{label}</div>
           <div className="font-semibold text-xl">{value}</div>
         </div>
       </CardContent>
@@ -706,7 +748,7 @@ function StatCard({
 function SetupNotice({ missing }: { missing: string[] }) {
   const t = useTranslations("AdminPage")
   return (
-    <main className="mx-auto w-full max-w-5xl">
+    <main className="mx-auto w-full max-w-5xl p-4 md:p-10 md:pt-8">
       <Card>
         <CardContent className="space-y-3 p-6">
           <div className="flex items-center gap-2 font-semibold">
@@ -742,25 +784,38 @@ function ErrorNotice({ message }: { message: string }) {
 function EventRow({ event }: { event: NodeStatusAdminEvent }) {
   const t = useTranslations("AdminPage")
   return (
-    <tr className="border-b last:border-0">
-      <Td>{event.username}</Td>
-      <Td>
+    <tr className="grid gap-3 rounded-lg border p-4 md:table-row md:border-0 md:border-b md:p-0 md:last:border-0">
+      <Td className="block p-0 md:table-cell md:px-3 md:py-3">
+        <span className="mb-1 block text-muted-foreground text-xs md:hidden">{t("node")}</span>
+        <div className="break-all">{event.username}</div>
+      </Td>
+      <Td className="block p-0 md:table-cell md:px-3 md:py-3">
+        <span className="mb-1 block text-muted-foreground text-xs md:hidden">{t("status")}</span>
         {event.resolved ? (
           <Badge variant="secondary">{t("resolved")}</Badge>
         ) : (
           <Badge>{t("unresolved")}</Badge>
         )}
       </Td>
-      <Td>{formatDate(event.created_at)}</Td>
-      <Td>{event.resolved ? formatDate(event.updated_at) : "-"}</Td>
-      <Td>
+      <Td className="block p-0 md:table-cell md:px-3 md:py-3">
+        <span className="mb-1 block text-muted-foreground text-xs md:hidden">{t("createdAt")}</span>
+        {formatDate(event.created_at)}
+      </Td>
+      <Td className="block p-0 md:table-cell md:px-3 md:py-3">
+        <span className="mb-1 block text-muted-foreground text-xs md:hidden">
+          {t("resolvedAt")}
+        </span>
+        {event.resolved ? formatDate(event.updated_at) : "-"}
+      </Td>
+      <Td className="block p-0 md:table-cell md:px-3 md:py-3">
+        <span className="mb-1 block text-muted-foreground text-xs md:hidden">{t("actions")}</span>
         <form action={deleteEventAction} className="flex justify-end">
           <input type="hidden" name="id" value={event.id} />
           <ConfirmSubmitButton
             type="submit"
             variant="destructive"
             size="sm"
-            className="gap-2"
+            className="h-11 gap-2 md:h-9"
             message={t("confirmDeleteEvent", { name: event.username })}
           >
             <Trash2 className="size-4" />

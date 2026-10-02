@@ -58,14 +58,14 @@ export function CreatedNodeCopyButton({
   const label = status === "idle" ? copyLabel : status === "copied" ? copiedLabel : copyFailedLabel
 
   return (
-    <span className="inline-flex size-9 shrink-0 items-center justify-center">
+    <span className="inline-flex size-11 shrink-0 items-center justify-center md:size-9">
       {matches && (
         <>
           <Button
             type="button"
             variant="outline"
             size="sm"
-            className="size-9 p-0"
+            className="size-11 p-0 md:size-9"
             onClick={copyCommand}
             aria-live="polite"
             aria-label={label}

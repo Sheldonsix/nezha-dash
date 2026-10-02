@@ -32,15 +32,15 @@ export function CreateServerForm({
     }
   }, [state, setCreatedNode])
   return (
-    <form action={formAction} className="grid gap-3 md:grid-cols-3">
+    <form action={formAction} className="grid grid-cols-1 gap-3 md:grid-cols-3">
       {children}
       {state.error && (
         <p role="alert" className="col-span-full text-destructive text-sm">
           {state.error}
         </p>
       )}
-      <div className="col-span-full flex justify-end">
-        <Button type="submit" disabled={pending} className="gap-2">
+      <div className="col-span-full flex sm:flex-row sm:justify-end">
+        <Button type="submit" disabled={pending} className="w-full sm:w-auto">
           {pending ? (
             <LoaderCircle aria-hidden className="size-4 animate-spin" />
           ) : (
