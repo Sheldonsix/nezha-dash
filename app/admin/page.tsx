@@ -590,7 +590,7 @@ export default async function AdminPage({
               </div>
             </CardHeader>
             <CardContent className="px-4 pb-4 sm:px-6 sm:pb-6 md:overflow-x-auto">
-              <table className="block text-sm md:table md:min-w-[680px]">
+              <table className="block w-full text-sm md:table md:min-w-170">
                 <thead className="hidden border-b text-muted-foreground md:table-header-group">
                   <tr>
                     <Th>{t("node")}</Th>
