@@ -27,7 +27,10 @@ export function formatNezhaInfo(serverInfo: NezhaAPISafe) {
       : "",
     boot_time: serverInfo.host.BootTime,
     boot_time_string: serverInfo.host.BootTime
-      ? new Date(serverInfo.host.BootTime * 1000).toLocaleString()
+      ? new Date(serverInfo.host.BootTime * 1000).toLocaleString(undefined, {
+          dateStyle: "short",
+          timeStyle: "short",
+        })
       : "",
     online: serverInfo.online_status,
     uptime: serverInfo.status.Uptime || 0,
