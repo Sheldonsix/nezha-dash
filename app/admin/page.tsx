@@ -419,15 +419,15 @@ export default async function AdminPage({
               <CardTitle className="text-base">{t("nodeManagement")}</CardTitle>
             </CardHeader>
             <CardContent className="px-4 pb-4 sm:px-6 sm:pb-6 md:overflow-x-auto">
-              <table className="block w-full text-sm md:table md:min-w-205">
+              <table className="block w-full text-sm md:table md:min-w-205 md:text-center">
                 <thead className="hidden border-b text-muted-foreground md:table-header-group">
                   <tr>
-                    <Th>{t("node")}</Th>
-                    <Th>{t("status")}</Th>
-                    <Th>{t("region")}</Th>
-                    <Th>{t("type")}</Th>
-                    <Th>{t("load")}</Th>
-                    <Th>{t("uptime")}</Th>
+                    <Th className="text-left">{t("node")}</Th>
+                    <Th className="text-center">{t("status")}</Th>
+                    <Th className="text-center">{t("region")}</Th>
+                    <Th className="text-center">{t("type")}</Th>
+                    <Th className="text-center">{t("load")}</Th>
+                    <Th className="text-center">{t("uptime")}</Th>
                     <Th className="text-right">{t("actions")}</Th>
                   </tr>
                 </thead>
@@ -454,7 +454,7 @@ export default async function AdminPage({
                         <span className="mb-1 block text-muted-foreground text-xs md:hidden">
                           {t("status")}
                         </span>
-                        <div className="flex flex-wrap items-center gap-2">
+                        <div className="flex flex-wrap items-center gap-2 md:justify-center">
                           <StatusBadge online={server.online} />
                           {server.disabled && <Badge variant="secondary">{t("disabled")}</Badge>}
                         </div>
@@ -578,7 +578,7 @@ export default async function AdminPage({
                   <form action={deleteAllEventsAction}>
                     <ConfirmSubmitButton
                       type="submit"
-                      variant="outline"
+                      variant="destructive"
                       size="sm"
                       className="h-11 md:h-9"
                       message={t("confirmClearEvents")}
@@ -644,7 +644,7 @@ function AdminLogin({ error }: { error: boolean }) {
       className="flex min-h-screen flex-col items-center justify-center gap-4 p-4"
     >
       <section className="grid w-full max-w-sm grid-cols-1 gap-2 sm:grid-cols-[max-content_minmax(0,1fr)] sm:gap-x-3">
-        <label htmlFor="admin-username" className="font-semibold text-base">
+        <label htmlFor="admin-username" className="grid items-center font-semibold md:justify-end">
           {t("UsernameSignInMessage")}
         </label>
         <Input
@@ -655,7 +655,7 @@ function AdminLogin({ error }: { error: boolean }) {
           required
           autoComplete="username"
         />
-        <label htmlFor="admin-password" className="font-semibold text-base">
+        <label htmlFor="admin-password" className="grid items-center font-semibold md:justify-end">
           {t("PasswordSignInMessage")}
         </label>
         <Input
@@ -669,7 +669,7 @@ function AdminLogin({ error }: { error: boolean }) {
         {error && (
           <p className="font-semibold text-red-500 text-sm sm:col-start-2">{t("ErrorMessage")}</p>
         )}
-        <SubmitButton type="submit" className="w-full sm:col-start-2 sm:w-1/2 sm:justify-self-end">
+        <SubmitButton type="submit" className="w-1/4 justify-self-end sm:col-start-2">
           {t("Submit")}
         </SubmitButton>
       </section>

@@ -40,7 +40,7 @@ export function CreateServerForm({
         </p>
       )}
       <div className="col-span-full flex sm:flex-row sm:justify-end">
-        <Button type="submit" disabled={pending} className="w-full sm:w-auto">
+        <Button type="submit" disabled={pending} className="h-11 w-full gap-2 sm:w-auto md:h-9">
           {pending ? (
             <LoaderCircle aria-hidden className="size-4 animate-spin" />
           ) : (
