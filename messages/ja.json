@@ -94,7 +94,16 @@
     "regionPlaceholder": "JP などのコードを入力",
     "copyInstallCommand": "インストールコマンドをコピー",
     "copied": "コピーしました",
-    "copyFailed": "コピーに失敗しました"
+    "copyFailed": "コピーに失敗しました",
+    "exportNodes": "ノードをエクスポート",
+    "exportingNodes": "エクスポート中...",
+    "importNodes": "ノードをインポート",
+    "importingNodes": "インポート中...",
+    "migrationSuccess": "{count} 個のノードをインポートしました。既存のパスワードは引き続き使用できます。パスワードを変更する場合は、ノードとクライアント設定を更新してください。サービスアドレスが変わった場合は、クライアントの接続先も更新してください。",
+    "migrationTargetNotEmpty": "現在のシステムにはすでにノードが存在するため、インポートできません。ノード移行ファイルは、ノードがない新しいシステムにのみインポートできます。",
+    "invalidMigrationFile": "このファイルはインポートできません。NodeStatus からエクスポートされた完全な移行ファイルであることを確認してください。",
+    "migrationFileTooLarge": "ノード移行ファイルは 2 MiB 以下にしてください。",
+    "migrationFileWarning": "エクスポートファイルには機密性の高いノード認証データが含まれています。公開または共有しないでください。エクスポートを続行しますか？"
   },
   "NetworkChartClient": {
     "avg_delay": "遅延",

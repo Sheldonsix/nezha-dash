@@ -94,7 +94,16 @@
     "regionPlaceholder": "請輸入代碼如 JP",
     "copyInstallCommand": "複製安裝命令",
     "copied": "已複製",
-    "copyFailed": "複製失敗"
+    "copyFailed": "複製失敗",
+    "exportNodes": "匯出節點",
+    "exportingNodes": "正在匯出...",
+    "importNodes": "匯入節點",
+    "importingNodes": "正在匯入...",
+    "migrationSuccess": "已匯入 {count} 個節點，原密碼仍然有效。如需變更密碼，請編輯節點並同步更新用戶端設定；若服務位址已變更，也請更新用戶端連線位址。",
+    "migrationTargetNotEmpty": "目前系統已存在節點，無法匯入。節點遷移檔案只能匯入至沒有節點的新系統。",
+    "invalidMigrationFile": "無法匯入此檔案。請確認這是由 NodeStatus 匯出的完整遷移檔案。",
+    "migrationFileTooLarge": "節點遷移檔案不得超過 2 MiB。",
+    "migrationFileWarning": "匯出檔案包含敏感的節點驗證資料，請勿公開或分享。確定要匯出嗎？"
   },
   "NetworkChartClient": {
     "avg_delay": "延遲",

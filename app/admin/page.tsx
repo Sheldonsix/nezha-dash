@@ -24,6 +24,7 @@ import { ConfirmSubmitButton } from "@/components/ConfirmSubmitButton"
 import { CreatedNodeCommandProvider, CreatedNodeCopyButton } from "@/components/CreatedNodeCommand"
 import { CreateServerForm } from "@/components/CreateServerForm"
 import { BackIcon } from "@/components/Icon"
+import { NodeMigrationButtons } from "@/components/NodeMigrationButtons"
 import { SubmitButton } from "@/components/SubmitButton"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -35,7 +36,9 @@ import {
   deleteAllNodeStatusAdminEvents,
   deleteNodeStatusAdminEvent,
   deleteNodeStatusAdminServer,
+  exportNodeStatusAdminServers,
   getNodeStatusSnapshot,
+  importNodeStatusAdminServers,
   listNodeStatusAdminEvents,
   listNodeStatusAdminServers,
   NodeStatusAdminError,
@@ -60,6 +63,11 @@ type ServerRow = NodeStatusAdminServer & {
   load?: number
   networkIn?: number
   networkOut?: number
+}
+
+export type NodeImportState = {
+  message: string
+  error: string
 }
 
 function safeEqual(a: string, b: string) {
@@ -275,6 +283,63 @@ async function moveServerAction(formData: FormData) {
   revalidatePath("/admin")
 }
 
+async function exportServersAction() {
+  "use server"
+
+  await requireAdmin()
+  return exportNodeStatusAdminServers()
+}
+
+async function importServersAction(
+  _previousState: NodeImportState,
+  formData: FormData,
+): Promise<NodeImportState> {
+  "use server"
+
+  await requireAdmin()
+  const t = await getTranslations("AdminPage")
+  const invalidFile = { message: "", error: t("invalidMigrationFile") }
+
+  const file = formData.get("file")
+  if (!(file instanceof File) || file.size === 0) return invalidFile
+
+  if (file.size > 2 * 1024 * 1024) {
+    return {
+      message: "",
+      error: t("migrationFileTooLarge"),
+    }
+  }
+
+  let data: unknown
+  try {
+    data = JSON.parse(await file.text())
+  } catch {
+    return invalidFile
+  }
+
+  try {
+    const count = await importNodeStatusAdminServers(data)
+
+    revalidatePath("/admin")
+
+    return {
+      message: t("migrationSuccess", { count }),
+      error: "",
+    }
+  } catch (error) {
+    if (error instanceof NodeStatusAdminError && error.code === "migration_target_not_empty") {
+      return {
+        message: "",
+        error: t("migrationTargetNotEmpty"),
+      }
+    }
+    if (error instanceof NodeStatusAdminError && error.code === "invalid_migration_file") {
+      return invalidFile
+    }
+    return { message: "", error: t("requestFailed") }
+  }
+}
+
 export default async function AdminPage({
   searchParams,
 }: {
@@ -416,7 +481,20 @@ export default async function AdminPage({
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">{t("nodeManagement")}</CardTitle>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <CardTitle className="text-base">{t("nodeManagement")}</CardTitle>
+
+                <NodeMigrationButtons
+                  exportAction={exportServersAction}
+                  importAction={importServersAction}
+                  exportLabel={t("exportNodes")}
+                  exportingLabel={t("exportingNodes")}
+                  importLabel={t("importNodes")}
+                  importingLabel={t("importingNodes")}
+                  exportWarning={t("migrationFileWarning")}
+                  requestFailedLabel={t("requestFailed")}
+                />
+              </div>
             </CardHeader>
             <CardContent className="px-4 pb-4 sm:px-6 sm:pb-6 md:overflow-x-auto">
               <table className="block w-full text-sm md:table md:min-w-205 md:text-center">

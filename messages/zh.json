@@ -94,7 +94,16 @@
     "regionPlaceholder": "请输入代码如 JP",
     "copyInstallCommand": "复制安装命令",
     "copied": "已复制",
-    "copyFailed": "复制失败"
+    "copyFailed": "复制失败",
+    "exportNodes": "导出节点",
+    "exportingNodes": "正在导出...",
+    "importNodes": "导入节点",
+    "importingNodes": "正在导入...",
+    "migrationSuccess": "已导入 {count} 个节点，原密码继续有效。如需改密，请编辑节点并同步客户端配置；若服务地址已变化，也请更新客户端连接地址。",
+    "migrationTargetNotEmpty": "当前系统已存在节点，无法导入。节点迁移文件只能导入到没有节点的新系统中。",
+    "invalidMigrationFile": "无法导入此文件。请确认它是由 NodeStatus 导出的完整迁移文件。",
+    "migrationFileTooLarge": "节点迁移文件不能超过 2 MiB。",
+    "migrationFileWarning": "导出文件包含敏感的节点认证数据，请勿公开或分享。确定要导出吗？"
   },
   "NetworkChartClient": {
     "avg_delay": "延迟",

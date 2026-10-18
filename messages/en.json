@@ -94,7 +94,16 @@
     "regionPlaceholder": "Enter a code like JP",
     "copyInstallCommand": "Copy install command",
     "copied": "Copied",
-    "copyFailed": "Copy failed"
+    "copyFailed": "Copy failed",
+    "exportNodes": "Export nodes",
+    "exportingNodes": "Exporting...",
+    "importNodes": "Import nodes",
+    "importingNodes": "Importing...",
+    "migrationSuccess": "Imported {count} nodes. Existing passwords remain valid. To change one, edit the node and update its client configuration. If the service address changed, update the client connection address.",
+    "migrationTargetNotEmpty": "This system already contains nodes, so the import cannot continue. Node migration files can only be imported into a new system with no nodes.",
+    "invalidMigrationFile": "This file cannot be imported. Make sure it is a complete migration file exported by NodeStatus.",
+    "migrationFileTooLarge": "The node migration file must not exceed 2 MiB.",
+    "migrationFileWarning": "The export file contains sensitive node authentication data. Do not publish or share it. Continue with the export?"
   },
   "NetworkChartClient": {
     "avg_delay": "Latency",

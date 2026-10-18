@@ -94,7 +94,16 @@
     "regionPlaceholder": "Code wie DE eingeben",
     "copyInstallCommand": "Installationsbefehl kopieren",
     "copied": "Kopiert",
-    "copyFailed": "Kopieren fehlgeschlagen"
+    "copyFailed": "Kopieren fehlgeschlagen",
+    "exportNodes": "Knoten exportieren",
+    "exportingNodes": "Wird exportiert...",
+    "importNodes": "Knoten importieren",
+    "importingNodes": "Wird importiert...",
+    "migrationSuccess": "{count} Knoten wurden importiert. Bestehende Passwörter bleiben gültig. Wenn Sie ein Passwort ändern, aktualisieren Sie den Knoten und die Client-Konfiguration. Falls sich die Dienstadresse geändert hat, aktualisieren Sie auch die Verbindungsadresse des Clients.",
+    "migrationTargetNotEmpty": "Dieses System enthält bereits Knoten, daher ist kein Import möglich. Knoten-Migrationsdateien können nur in ein neues System ohne Knoten importiert werden.",
+    "invalidMigrationFile": "Diese Datei kann nicht importiert werden. Stellen Sie sicher, dass es sich um eine vollständige, von NodeStatus exportierte Migrationsdatei handelt.",
+    "migrationFileTooLarge": "Die Knoten-Migrationsdatei darf höchstens 2 MiB groß sein.",
+    "migrationFileWarning": "Die Exportdatei enthält vertrauliche Authentifizierungsdaten der Knoten. Veröffentlichen oder teilen Sie sie nicht. Export fortsetzen?"
   },
   "NetworkChartClient": {
     "avg_delay": "Latenz",

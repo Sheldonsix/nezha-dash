@@ -42,6 +42,22 @@ export type NodeStatusEventList = {
   list: NodeStatusAdminEvent[]
 }
 
+export type NodeStatusMigrationFile = {
+  format: "nodestatus-nodes"
+  version: 1
+  exported_at: string
+  nodes: Array<{
+    username: string
+    password_hash: string
+    name: string
+    type: string
+    location: string
+    region: string
+    disabled: boolean
+    order: number
+  }>
+}
+
 let tokenCache: { token: string; expiresAt: number } | null = null
 
 function baseUrl() {
@@ -184,4 +200,15 @@ export function deleteNodeStatusAdminEvent(id: number) {
 
 export function deleteAllNodeStatusAdminEvents() {
   return adminFetch<null>("/api/admin/events", { method: "DELETE" })
+}
+
+export function exportNodeStatusAdminServers() {
+  return adminFetch<NodeStatusMigrationFile>("/api/admin/servers/export")
+}
+
+export function importNodeStatusAdminServers(data: unknown) {
+  return adminFetch<number>("/api/admin/servers/import", {
+    method: "POST",
+    body: JSON.stringify(data),
+  })
 }
